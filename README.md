@@ -6,7 +6,7 @@
 
 - 作者：**秋实KL** · 抖音 **@秋实KL**
 - 内置：AstrBot v4.29.3 · NapCat v4.18.41（Node 版）· astrbot_plugin_group_chat_plus · **表情包管理器 meme_manager v5.2.7** · 嵌入式 Python 3.12
-- 默认表情包：首次启动**后台静默**安装「DeepSeek 二创表情包」（174 张；因上游 LICENSE=NOASSERTION 不随公开 zip 分发图片，无下载按钮/进度条）
+- 默认表情包：公开 zip **已预装**「DeepSeek 二创表情包」174 张（据项目方声明作者已授权二次分发；上游 anka-afk / deepseek-fanart-meme-pack@v1.0.0）；缺失时才后台静默补齐
 - 默认人格「小鱼」已启用表情包工具；内置技能 documents/spreadsheets/pdf/skill-creator 默认关闭
 - 默认模型：DeepSeek `deepseek-flash`
 - **仅限免费分发，禁止任何形式的售卖或商用。** 如果你是花钱买到的，说明你被骗了。
@@ -35,7 +35,7 @@
 AI 会按 `AGENTS.md` 依次做环境检测、修复、配置和启动。**API Key 请你自己粘贴**，不要发到任何聊天群里。
 
 ## 想让机器人更有人情味？
-见 [推荐插件.md](docs/推荐插件.md)。**表情包管理器已预装**，首次启动后台静默安装 DeepSeek 二创表情包（无需手动下载）；其它如贴表情、戳一戳等见文档。
+见 [推荐插件.md](docs/推荐插件.md)。**表情包管理器与 DeepSeek 二创表情包已预装**（解压即用，无需联网下载）；其它如贴表情、戳一戳等见文档。
 
 ## 改人格 / 高级设置
 在启动器「控制台」页点「打开管理后台」（AstrBot 原版界面）。

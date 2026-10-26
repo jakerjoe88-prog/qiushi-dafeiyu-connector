@@ -1,10 +1,9 @@
-"""默认表情包「DeepSeek 二创」首次启动静默安装。
+"""默认表情包「DeepSeek 二创」：公开整合包预装图片；缺失时静默联网补齐。
 
 图片来源：https://github.com/anka-afk/deepseek-fanart-meme-pack @ v1.0.0
-许可：上游 LICENSE 为 NOASSERTION（原素材许可未指定），版权归各权利人。
-公开 Release zip **不**二次分发图片；启动器在本机首次启动时后台静默从官方仓库拉取
-并写入 packs / registry / selection_rules（无下载按钮、无界面进度）。
-本地自测可用 dist/with-meme-pack/（含图片，不上传 Release）。
+据项目方声明（约 2026-10-26）：作者已授权二次分发；上游 LICENSE 原文仍保留在
+packs/.../LICENSE。公开 Release zip 默认随包附带 174 张图片并写入 registry/默认规则；
+若安装目录缺失图片，启动器仍可后台静默从官方仓库拉取作为兜底（无下载按钮/进度条）。
 """
 from __future__ import annotations
 
@@ -63,9 +62,10 @@ def _attribution_text() -> str:
         "默认表情包 DeepSeek 二创（deepseek-fanart-meme-pack）\n"
         f"来源：https://github.com/{PACK_REPO} @ {PACK_REF}\n"
         "维护：anka-afk（Meme Manager 适配）\n"
-        "许可：上游 LICENSE=NOASSERTION（原素材许可未指定），版权归各权利人；\n"
-        "公开整合包不二次分发图片，仅在你本机首次启动时后台静默从官方仓库下载。\n"
-        "详见该仓库 LICENSE。官方-pack 标签是 Meme Manager 维护分类，非 DeepSeek 官方背书。\n"
+        "据项目方声明：作者已授权二次分发（约 2026-10-26）。\n"
+        "上游 LICENSE 原文随包保留（packs/.../LICENSE）；版权归各权利人。\n"
+        "公开整合包默认已预装图片并设为默认；若本机缺失，启动器可后台静默从官方仓库补齐。\n"
+        "官方-pack 标签是 Meme Manager 维护分类，非 DeepSeek 官方背书。\n"
     )
 
 
@@ -93,7 +93,7 @@ def mark_installed_default(astrbot_dir: str) -> None:
 
 
 def ensure_runtime_scaffold(astrbot_dir: str) -> None:
-    """写目录骨架；图片已就绪则标记已安装/默认，否则保持空 registry 等静默下载。"""
+    """写目录骨架；图片已就绪则标记已安装/默认，否则保持空 registry 等静默下载兜底。"""
     root = _plugin_data(astrbot_dir)
     for sub in ("packs", "backup", "temp"):
         os.makedirs(os.path.join(root, sub), exist_ok=True)
@@ -111,7 +111,7 @@ def ensure_runtime_scaffold(astrbot_dir: str) -> None:
 
 
 def _download(url: str, dest: str, timeout: int = 600) -> None:
-    req = urllib.request.Request(url, headers={"User-Agent": "QiushiDafeiyuConnector/1.0.3"})
+    req = urllib.request.Request(url, headers={"User-Agent": "QiushiDafeiyuConnector/1.0.4"})
     with urllib.request.urlopen(req, timeout=timeout) as resp, open(dest, "wb") as out:
         total = int(resp.headers.get("Content-Length") or 0)
         done = 0
@@ -164,14 +164,14 @@ _install_from_zip = install_from_zip
 
 
 def install_default_pack(astrbot_dir: str, *, force: bool = False) -> dict:
-    """同步安装。已就绪则跳过；优先本地 vendor zip，否则静默联网拉取。"""
+    """同步安装。已就绪则跳过；优先本地 vendor zip，否则静默联网拉取（兜底）。"""
     ensure_runtime_scaffold(astrbot_dir)
     if pack_ready(astrbot_dir) and not force:
         mark_installed_default(astrbot_dir)
         _set(status="ready", msg="ready", progress=100)
         return status()
 
-    # 可选：打包机/自测把官方 zip 放在 app/vendor/ 下（公开 Release 不含此文件）
+    # 可选：打包机把官方 zip 放在 app/vendor/ 下
     here = os.path.dirname(os.path.abspath(__file__))
     local_candidates = [
         os.path.join(here, "vendor", f"{PACK_ID}-{PACK_VERSION}.zip"),
@@ -206,7 +206,7 @@ def install_default_pack(astrbot_dir: str, *, force: bool = False) -> dict:
 
 
 def ensure_default_pack_async(astrbot_dir: str) -> None:
-    """后台线程：启动时静默拉表情包。可重复调用，有锁。"""
+    """后台线程：图片缺失时静默补齐。可重复调用，有锁。已预装则直接 ready。"""
     if pack_ready(astrbot_dir):
         ensure_runtime_scaffold(astrbot_dir)
         _set(status="ready", msg="ready", progress=100)

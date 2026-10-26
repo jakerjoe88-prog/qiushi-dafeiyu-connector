@@ -43,12 +43,12 @@ Copyright © 2024 Mlikiowa
 - 许可全文：`licenses/meme_manager-LICENSE-MIT.txt`
 - 依赖（faiss-cpu、pillow、boto3 等）已预装进 `runtime/python/Lib/site-packages`，见第 6 节。
 
-## 5. DeepSeek 二创表情包（公开 Release 不随 zip 分发图片）
-- 上游：https://github.com/anka-afk/deepseek-fanart-meme-pack @ v1.0.0（id `deepseek-fanart-meme-pack`）
-- 法律结论（2026-10-26 复核）：GitHub SPDX = **NOASSERTION** / LICENSE 明确「原素材许可未指定、不授予额外商用或再许可」→ **无再分发授权**。因此公开 GitHub Release zip **不得**附带图片。
-- 用户体验：启动器首次启动时**后台静默**从官方仓库下载到本机 `runtime/AstrBot/data/plugin_data/meme_manager/packs/`，写入 registry 并设为默认；**无下载按钮、无界面进度条**。
+## 5. DeepSeek 二创表情包（公开 Release 默认随 zip 预装图片）
+- 上游：https://github.com/anka-afk/deepseek-fanart-meme-pack @ v1.0.0（id `deepseek-fanart-meme-pack`；维护 anka-afk）
+- **据项目方声明：作者已授权二次分发**（约 2026-10-26）。公开 GitHub Release zip **默认附带**约 174 张图片，并写入 registry / selection_rules 设为默认。
+- 上游原 LICENSE 文件随包保留在 `runtime/AstrBot/data/plugin_data/meme_manager/packs/deepseek-fanart-meme-pack/LICENSE`（原文仍为内容说明 / NOASSERTION 表述）；版权归各权利人。
+- 兜底：若本机 packs 目录缺失图片，启动器可后台静默从官方仓库补齐（无下载按钮、无界面进度条）。
 - 说明文件：`licenses/DeepSeek二创表情包-来源说明.txt`（用户本机也会有一份）。
-- 作者本地自测可用 `dist/with-meme-pack/`（含图片，**不上传** Release）。
 
 ## 6. Python 与第三方库
 - 嵌入式 CPython 3.12.10：PSF License，见 `licenses/Python-LICENSE.txt`
