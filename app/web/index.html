@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>秋实的大肥鱼连接器</title>
+<link rel="icon" href="/static/icon.svg">
+<style>
+:root{
+  --font:"HarmonyOS Sans SC","MiSans","Microsoft YaHei UI","Microsoft YaHei","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif;
+  --mono:"Cascadia Mono",Consolas,"JetBrains Mono",ui-monospace,monospace;
+  --bg:#F9F8F8;--card:#FFFFFF;--soft:#F1F5F9;--blue:#4D6BFE;--blue2:#3B57E8;--bsoft:#EBEFFF;
+  --ink:#000;--ink2:#334155;--sub:#64748B;--faint:#94A3B8;--line:#E5E7EB;
+  --ok:#16A34A;--oksoft:#EAF7EF;--wait:#F59E0B;--waitsoft:#FFF7E6;--bad:#E5484D;--badsoft:#FDECEC;
+  --shadow:0 1px 2px rgba(15,23,42,.04),0 8px 24px -12px rgba(15,23,42,.10);
+  --r:18px;
+}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{font-family:var(--font);background:var(--bg);color:var(--ink2);font-size:14.5px;line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+b{font-weight:600;color:var(--ink)}
+.top{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:12px;padding:14px 32px;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.logo{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--bsoft)}
+.logo svg{width:30px;height:30px}
+.brand h1{font-size:16.5px;font-weight:700;color:var(--ink);letter-spacing:.3px}
+.brand p{font-size:12px;color:var(--sub)}
+.top .sp{flex:1}
+.creator{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ink2);padding:5px 11px;border-radius:999px;background:var(--soft)}
+.creator svg{width:14px;height:14px}
+.chip{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--sub);padding:5px 12px;border-radius:999px;background:var(--soft)}
+.chip .d{width:7px;height:7px;border-radius:50%;background:var(--faint)}
+.chip.on{background:var(--oksoft);color:var(--ok)}.chip.on .d{background:var(--ok);animation:soft 2.4s infinite}
+.chip.mid{background:var(--waitsoft);color:#B45309}.chip.mid .d{background:var(--wait);animation:soft 1.6s infinite}
+.iconbtn{height:34px;padding:0 12px;border-radius:10px;display:inline-flex;gap:6px;align-items:center;background:#fff;border:1px solid var(--line);color:var(--ink2);cursor:pointer;font-size:12.5px;transition:.2s}
+.iconbtn:hover{border-color:var(--blue);color:var(--blue)}
+.iconbtn svg{width:16px;height:16px}
+main{max-width:1040px;margin:0 auto;padding:28px 28px 36px}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);border:1px solid var(--line);padding:36px 40px}
+.view{animation:viewIn .45s ease-out both}
+@keyframes viewIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.hide{display:none!important}
+.hero{text-align:center;padding:52px 40px 44px}
+.hero .whale{display:block;width:104px;height:104px;margin:0 auto 10px;animation:bob 4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-5px)}}
+.hero .badge{display:inline-flex;gap:8px;align-items:center;font-size:12.5px;color:var(--blue);padding:5px 14px;border-radius:999px;background:var(--bsoft)}
+.hero h2{font-size:38px;line-height:1.25;font-weight:700;color:var(--ink);letter-spacing:.5px;margin:18px 0 12px}
+.hero h2 em{font-style:normal;color:var(--blue)}
+.hero p.lead{font-size:15.5px;color:var(--sub);max-width:560px;margin:0 auto}
+.feats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:34px auto 32px;max-width:780px;text-align:left}
+.feat{padding:18px;border-radius:16px;background:var(--soft);transition:.25s}
+.feat:hover{transform:translateY(-2px);background:#EDF2F8}
+.feat .ic{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;margin-bottom:10px;background:#fff;color:var(--blue)}
+.feat .ic svg{width:18px;height:18px}
+.feat b{display:block;font-size:14.5px}.feat span{font-size:12.5px;color:var(--sub)}
+.meta{margin-top:16px;font-size:12px;color:var(--faint)}
+.stepper{display:flex;align-items:center;margin-bottom:30px}
+.st{display:flex;align-items:center;gap:10px;color:var(--faint);font-weight:600;font-size:13.5px;white-space:nowrap;transition:.3s}
+.st .n{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--line);font-size:13px;background:#fff;transition:.3s}
+.st.on{color:var(--ink)}.st.on .n{border-color:var(--blue);background:var(--blue);color:#fff;box-shadow:0 0 0 5px var(--bsoft)}
+.st.done{color:var(--ink2)}.st.done .n{border-color:var(--blue);background:var(--bsoft);color:var(--blue)}
+.st.done .n b{display:none}.st .n svg{display:none;width:14px;height:14px}.st.done .n svg{display:block}
+.st .n b{color:inherit}
+.bar-l{flex:1;height:2px;margin:0 14px;border-radius:2px;background:var(--line);position:relative;overflow:hidden}
+.bar-l i{position:absolute;inset:0;background:var(--blue);transform:scaleX(0);transform-origin:left;transition:transform .6s ease}
+.bar-l.fill i{transform:scaleX(1)}
+.pane{animation:paneIn .4s ease-out both}.pane.back{animation-name:paneBack}
+@keyframes paneIn{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
+@keyframes paneBack{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+h3{font-size:22px;font-weight:700;color:var(--ink)}
+.lead{color:var(--sub);margin:6px 0 24px}
+label{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--ink);margin-bottom:8px;font-size:13.5px}
+label small{font-weight:400;color:var(--faint);font-size:12px}
+.tag{font-size:11px;font-weight:500;padding:1px 8px;border-radius:999px;background:var(--bsoft);color:var(--blue)}
+.tag.opt{background:var(--soft);color:var(--sub)}
+.field{position:relative;display:flex;align-items:center;border-radius:12px;background:#fff;border:1px solid var(--line);transition:.2s}
+.field:hover{border-color:#CBD5E1}
+.field:focus-within{border-color:var(--blue);box-shadow:0 0 0 4px var(--bsoft)}
+.field.err{border-color:var(--bad);box-shadow:0 0 0 4px var(--badsoft);animation:shake .35s}
+.field.ok{border-color:#86D3A5;box-shadow:0 0 0 4px var(--oksoft)}
+@keyframes shake{25%,75%{transform:translateX(-3px)}50%{transform:translateX(3px)}}
+.field .pre{padding-left:14px;color:var(--faint);display:grid;place-items:center}
+.field .pre svg{width:18px;height:18px}
+.field input{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--ink);font:inherit;font-size:15px;padding:13px 12px}
+.field input.mono{font-family:var(--mono);font-size:14px}
+.field input::placeholder{color:var(--faint)}
+.field .suf{display:flex;gap:6px;padding-right:7px}
+.hint{min-height:22px;margin-top:8px;font-size:12.8px;color:var(--sub);display:flex;align-items:center;gap:7px}
+.hint.bad{color:var(--bad)}.hint.ok{color:var(--ok)}
+.hint svg{width:15px;height:15px;flex:none}
+button{font:inherit;cursor:pointer;border:0;color:inherit}
+.btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 22px;border-radius:12px;font-weight:600;font-size:14px;transition:transform .15s,background .2s,border-color .2s,color .2s,box-shadow .2s;overflow:hidden;white-space:nowrap}
+.btn svg{width:16px;height:16px}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn.pri{color:#fff;background:var(--blue);box-shadow:0 6px 16px -8px rgba(77,107,254,.7)}
+.btn.pri:hover{background:var(--blue2)}
+.btn.gh{background:#fff;border:1px solid var(--line);color:var(--ink2)}
+.btn.gh:hover{border-color:var(--blue);color:var(--blue);background:var(--bsoft)}
+.btn.dg{background:#fff;border:1px solid #F5C2C4;color:var(--bad)}
+.btn.dg:hover{background:var(--badsoft)}
+.btn.sm{padding:6px 12px;font-size:12.5px;border-radius:9px}
+.btn.xl{padding:14px 34px;font-size:15.5px;border-radius:14px}
+.btn .spin{width:15px;height:15px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;animation:rot .8s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+.btn.loading{cursor:progress}
+.ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.35);transform:scale(0);animation:rip .55s ease-out;pointer-events:none}
+.btn.gh .ripple,.btn.dg .ripple,.entry .ripple{background:rgba(77,107,254,.12)}
+@keyframes rip{to{transform:scale(4);opacity:0}}
+.actions{display:flex;align-items:center;gap:12px;margin-top:30px;padding-top:22px;border-top:1px solid var(--line)}
+.actions .sp{flex:1}
+.check{width:18px;height:18px;flex:none}
+.check circle{stroke:var(--ok);stroke-width:2;fill:var(--oksoft);stroke-dasharray:101;stroke-dashoffset:101;animation:draw .5s ease-out forwards}
+.check path{stroke:var(--ok);stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:20;stroke-dashoffset:20;animation:draw .3s .35s ease-out forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.okcard{display:flex;gap:14px;align-items:center;margin-top:4px;padding:14px 16px;border-radius:14px;background:var(--oksoft);animation:paneIn .4s both}
+.okcard .check{width:34px;height:34px}.okcard .check circle{fill:#fff}
+.okcard b{display:block}.okcard span{font-size:12.5px;color:var(--ink2)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.note{display:flex;gap:12px;margin-top:8px;padding:14px 16px;border-radius:14px;background:var(--waitsoft);font-size:13px;color:var(--ink2)}
+.note svg{width:20px;height:20px;color:var(--wait);flex:none;margin-top:1px}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--sub);padding:5px 12px;border-radius:999px;background:var(--soft)}
+.pill svg{width:14px;height:14px;color:var(--blue)}
+.sum{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:22px}
+.sum div{padding:11px 13px;border-radius:12px;background:#fff;border:1px solid var(--line);font-size:12px;color:var(--sub)}
+.sum b{display:block;font-size:13px;white-space:nowrap}
+.login{display:grid;grid-template-columns:290px 1fr;gap:36px;align-items:center}
+.qr{position:relative;width:290px;height:290px;border-radius:20px;padding:18px;background:var(--soft);display:grid;place-items:center}
+.qr .img{width:238px;height:238px;border-radius:14px;background:#fff;padding:12px;box-shadow:var(--shadow);animation:fadeUp .45s ease-out both}
+.qr img{width:100%;height:100%;image-rendering:pixelated;display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.qr .ph{text-align:center;color:var(--sub);font-size:13px;width:238px}
+.skel{width:180px;height:180px;margin:0 auto 14px;border-radius:14px;background:#fff;animation:breath 1.8s ease-in-out infinite}
+@keyframes breath{50%{opacity:.55}}
+.qr.done{background:var(--oksoft)}
+.qr .okbig{text-align:center}.qr .okbig .check{width:88px;height:88px;margin:0 auto 12px}.qr .okbig .check circle{fill:#fff}
+.qr .okbig b{font-size:17px;display:block}.qr .okbig span{color:var(--ink2);font-size:12.5px}
+.how{list-style:none;padding:0;counter-reset:h;display:grid;gap:10px}
+.how li{counter-increment:h;display:flex;gap:12px;align-items:center;padding:11px 14px;border-radius:12px;background:var(--soft);transition:.2s}
+.how li::before{content:counter(h);width:24px;height:24px;border-radius:50%;display:grid;place-items:center;flex:none;font-size:12px;font-weight:700;background:var(--bsoft);color:var(--blue)}
+.how li:hover{background:#EDF2F8}
+.qrstate{display:inline-flex;align-items:center;gap:8px;margin-bottom:14px;font-size:13px;font-weight:600;color:var(--ink)}
+.ph-head{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+.avatar{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;background:var(--bsoft);position:relative}
+.avatar svg{width:40px;height:40px}
+.avatar i{position:absolute;right:-3px;bottom:-3px;width:15px;height:15px;border-radius:50%;border:3px solid #fff;background:var(--faint)}
+.avatar.on i{background:var(--ok)}
+.ph-head .who{color:var(--sub);font-size:13px;font-family:var(--mono)}
+.ph-head .sp{flex:1}
+.big-state{font-size:13px;font-weight:600;padding:7px 14px;border-radius:999px;display:inline-flex;gap:8px;align-items:center;background:var(--soft);color:var(--sub)}
+.big-state.on{color:var(--ok);background:var(--oksoft)}.big-state.mid{color:#B45309;background:var(--waitsoft)}
+.lights{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.light{display:flex;gap:14px;align-items:center;padding:16px 18px;border-radius:16px;background:var(--soft);transition:.3s}
+.light b{display:block;font-size:14px}.light span{font-size:12.5px;color:var(--sub)}
+.dot{width:10px;height:10px;border-radius:50%;flex:none;background:#CBD5E1}
+.dot.ok{background:var(--ok);--pc:rgba(22,163,74,.35);animation:soft 2.4s infinite}
+.dot.wait{background:var(--wait);--pc:rgba(245,158,11,.35);animation:soft 1.6s infinite}
+.dot.bad{background:var(--bad)}
+@keyframes soft{0%{box-shadow:0 0 0 0 var(--pc,rgba(22,163,74,.35))}70%{box-shadow:0 0 0 7px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.ctrl{display:flex;gap:10px;align-items:center;margin-top:18px}
+.ctrl .sp{flex:1}
+.section{margin-top:22px;display:grid;grid-template-columns:1.05fr 1fr;gap:18px}
+.box{padding:22px;border-radius:16px;background:#fff;border:1px solid var(--line)}
+.box h4{font-size:15px;color:var(--ink);display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.box h4 svg{width:18px;height:18px;color:var(--blue)}
+.box p{color:var(--sub);font-size:12.8px}
+.entry{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;margin-top:12px;background:var(--soft);border:1px solid transparent;cursor:pointer;transition:.2s;text-align:left;width:100%;position:relative;overflow:hidden}
+.entry:hover{background:var(--bsoft);border-color:#C9D3FF;transform:translateY(-1px)}
+.entry .ei{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;flex:none;background:#fff}
+.entry .ei svg{width:20px;height:20px;color:var(--blue)}
+.entry b{display:block;font-size:14.5px}.entry span{font-size:12px;color:var(--sub)}
+.entry .arr{margin-left:auto;color:var(--faint);transition:.2s}.entry:hover .arr{color:var(--blue);transform:translateX(3px)}
+.entry .arr svg{width:18px;height:18px}
+.crumbs{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.crumbs span{font-size:11.5px;padding:3px 9px;border-radius:7px;background:var(--bsoft);color:var(--blue)}
+.cred{margin-top:14px;padding:12px 14px;border-radius:12px;background:var(--soft);display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12.8px;color:var(--sub)}
+code{font-family:var(--mono);font-size:13px;color:var(--ink);background:#fff;border:1px solid var(--line);padding:2px 9px;border-radius:8px}
+.cred .sp{flex:1}
+.usage li{font-size:13px}
+details{margin-top:18px;border-radius:14px;border:1px solid var(--line);background:#fff;overflow:hidden}
+summary{cursor:pointer;padding:12px 16px;font-size:13px;color:var(--sub);list-style:none;display:flex;gap:8px;align-items:center}
+summary::-webkit-details-marker{display:none}
+summary svg{width:14px;height:14px;transition:.25s}details[open] summary svg{transform:rotate(90deg)}
+pre{margin:0;padding:14px 16px;max-height:260px;overflow:auto;font:12px/1.55 var(--mono);color:var(--ink2);background:var(--soft);white-space:pre-wrap;word-break:break-all;border-top:1px solid var(--line)}
+.warn{display:flex;gap:10px;align-items:center;margin-bottom:16px;padding:12px 16px;border-radius:14px;background:var(--badsoft);color:#B42318;font-size:13px}
+footer{text-align:center;color:var(--faint);font-size:11.5px;margin-top:26px;line-height:1.9}
+footer .by{display:inline-flex;align-items:center;gap:6px;color:var(--ink2);font-size:12.5px;margin-bottom:4px}
+footer .by b{color:var(--blue)}footer .by svg{width:14px;height:14px}
+.toast{position:fixed;left:50%;bottom:30px;transform:translate(-50%,16px);opacity:0;padding:11px 18px;border-radius:12px;font-size:13.5px;display:flex;gap:10px;align-items:center;background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:0 12px 32px -10px rgba(15,23,42,.25);transition:.3s ease-out;z-index:50;pointer-events:none}
+.toast.show{transform:translate(-50%,0);opacity:1}
+.toast svg{width:18px;height:18px}
+.modal{position:fixed;inset:0;z-index:60;display:grid;place-items:center;background:rgba(15,23,42,.28);animation:fade .2s}
+.modal .card{max-width:440px;padding:28px;animation:fadeUp .25s ease-out}
+.modal h4{font-size:17px;color:var(--ink);margin-bottom:6px}.modal p{color:var(--sub);font-size:13.5px}
+.modal .actions{border:0;padding:0;margin-top:22px;justify-content:flex-end}
+.about{text-align:center}.about .whale{display:block;width:84px;height:84px;margin:0 auto 6px}
+.about .row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px;text-align:left}
+.about .row span{color:var(--sub)}
+@keyframes fade{from{opacity:0}}
+.logo{border-radius:50%;overflow:hidden;background:var(--bsoft);box-shadow:0 0 0 2px #fff,0 0 0 3px var(--bsoft)}.logo img{width:100%;height:100%;object-fit:cover}
+.hero.duo{display:grid;grid-template-columns:1.15fr .85fr;gap:24px;align-items:center;text-align:left;padding:34px 44px 30px}
+.hero.duo p.lead{margin:0}.hero.duo .feats{grid-template-columns:1fr;gap:10px;margin:22px 0}
+.hero.duo .feat{display:grid;grid-template-columns:40px 1fr;column-gap:12px;text-align:left;padding:12px 14px}.hero.duo .feat .ic{grid-row:span 2;margin:0}
+.hero.duo .meta{margin-top:12px}
+.stage{position:relative;display:flex;justify-content:center;align-items:flex-end;height:540px}
+.stage::before{content:"";position:absolute;bottom:6px;width:62%;height:26px;border-radius:50%;background:radial-gradient(closest-side,rgba(77,107,254,.18),transparent);animation:shadow 5s ease-in-out infinite}
+.stage img{position:relative;height:520px;width:auto;transform-origin:50% 100%;animation:floaty 5s ease-in-out infinite;user-select:none;-webkit-user-drag:none}
+.stage .bub{position:absolute;z-index:2;top:40px;left:-34px;white-space:nowrap;background:#fff;border:1px solid var(--line);border-radius:16px 16px 16px 4px;padding:9px 14px;font-size:13px;color:var(--ink2);box-shadow:0 6px 18px rgba(15,23,42,.06);animation:fadeUp .6s .4s both}
+@keyframes floaty{0%,100%{transform:translateY(0) scale(1,1)}50%{transform:translateY(-6px) scale(1.006,.996)}}
+@keyframes shadow{50%{transform:scaleX(.9);opacity:.75}}
+.aihelp{display:flex;gap:12px;align-items:center;margin-top:16px;padding:12px 14px;border-radius:14px;background:var(--bsoft);color:var(--ink2);font-size:13px;cursor:pointer;border:1px solid transparent;transition:.2s}
+.aihelp:hover{border-color:rgba(77,107,254,.35)}.aihelp b{color:var(--blue)}.aihelp svg{width:18px;height:18px;color:var(--blue);flex:none}
+.panel-top{display:grid;grid-template-columns:1fr 190px;gap:18px;align-items:end}
+.sitter{height:200px;display:flex;justify-content:center;align-items:flex-end}.sitter img{height:200px;animation:floaty 6s ease-in-out infinite;transform-origin:50% 100%}
+.avatar{overflow:visible}.avatar img{width:100%;height:100%;border-radius:16px;object-fit:cover}
+.about .ava{display:block;width:92px;height:92px;border-radius:50%;margin:0 auto 8px;box-shadow:0 0 0 4px var(--bsoft)}
+.vhead{display:flex;align-items:center;gap:14px;margin-bottom:18px}.vhead h3{font-size:20px}.vhead p{color:var(--sub);font-size:13px}.vhead .sp{flex:1}
+.dlist{display:grid;gap:8px}
+.ditem{display:grid;grid-template-columns:22px 1fr auto;gap:12px;align-items:start;padding:12px 16px;border-radius:14px;background:var(--soft)}
+.ditem .st{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:12px;margin-top:1px}
+.ditem.ok .st{background:var(--ok)}.ditem.warn .st{background:var(--wait)}.ditem.fail .st{background:var(--bad)}.ditem.skip .st{background:#CBD5E1}
+.ditem .st svg{width:13px;height:13px}
+.ditem b{font-size:14px}.ditem .d{font-size:12.5px;color:var(--sub);margin-top:2px}.ditem .f{font-size:12.5px;color:var(--ink2);margin-top:6px;padding-left:10px;border-left:2px solid var(--line)}
+.ditem.fail{background:#FEF2F2}.ditem.warn{background:#FFFBEB}
+.dsum{display:flex;gap:10px;align-items:center;padding:14px 18px;border-radius:16px;margin-bottom:14px;font-weight:600}
+.dsum svg{width:20px;height:20px;flex:none}.dsum.ok{background:var(--oksoft);color:var(--ok)}.dsum.bad{background:#FEF2F2;color:var(--bad)}
+.prompt{position:relative;padding:18px 20px;border-radius:16px;background:var(--soft);border:1px dashed #C7D2FE;font-size:14px;line-height:1.8;color:var(--ink2)}
+.ai-apps{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 4px}.ai-apps span{font-size:12px;padding:4px 12px;border-radius:999px;background:var(--bsoft);color:var(--blue)}
+.ai-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+.ai-steps div{padding:14px;border-radius:14px;background:var(--soft);font-size:13px;color:var(--sub)}.ai-steps b{display:block;color:var(--ink);font-size:14px;margin-bottom:4px}
+.ai-wrap{display:grid;grid-template-columns:1fr 150px;gap:20px;align-items:end}.ai-wrap img{width:150px;animation:floaty 5s ease-in-out infinite}
+@media (max-width:860px){.feats,.lights,.sum{grid-template-columns:1fr}.grid2,.section,.login{grid-template-columns:1fr}.hero h2{font-size:28px}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+ <defs>
+  <symbol id="i-bot" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="12" rx="4"/><path d="M12 3v4M9 12h.01M15 12h.01M9.5 15.5c1.5 1 3.5 1 5 0"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M10.8 12.2 20 3M16 7l3 3M14 9l2 2"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></symbol>
+  <symbol id="i-coin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><ellipse cx="12" cy="7" rx="8" ry="3"/><path d="M4 7v5c0 1.7 3.6 3 8 3s8-1.3 8-3V7M4 12v5c0 1.7 3.6 3 8 3s8-1.3 8-3v-5"/></symbol>
+  <symbol id="i-box" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+  <symbol id="i-ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5h.01"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17h.01"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2.5"/></symbol>
+  <symbol id="i-redo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 12a8 8 0 1 1-2.4-5.7M20 4v5h-5"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
+  <symbol id="i-mask" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 5c3 1.5 6 1.5 9 0 3 1.5 6 1.5 9 0v6c0 5-4 9-9 9s-9-4-9-9z"/><path d="M8 11h.01M16 11h.01M9 15c1.8 1.3 4.2 1.3 6 0"/></symbol>
+  <symbol id="i-cat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 4l4 4h8l4-4v10a8 8 0 0 1-16 0z"/><path d="M9 13h.01M15 13h.01M10.5 16h3"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></symbol>
+  <symbol id="i-scan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M4 12h16"/></symbol>
+  <symbol id="i-whale" viewBox="0 0 64 64"><path d="M8 34c0-11 10-19 23-19 12 0 20 7 22 15l5-6c1.5-1.8 4.3-.6 4 1.7L60 38c-.3 2-2.6 2.8-4 1.4l-2.6-2.6C51 46 42 52 31 52 18 52 8 45 8 34z" fill="#4D6BFE"/><path d="M12 38c4 7 11 10 19 10 7 0 13-2 17-7-5 2-11 3-17 3-7 0-13-2-19-6z" fill="#fff" opacity=".9"/><circle cx="22" cy="30" r="3" fill="#fff"/><circle cx="22.8" cy="30.5" r="1.6" fill="#1E293B"/><path d="M17 36c1.5 1.3 3.5 1.3 5 0" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round"/><circle cx="15.5" cy="34" r="1.6" fill="#FFB3C7" opacity=".9"/><path d="M27 12c0-3 2-5 4-6M31 13c1-3 3-4 6-4" stroke="#4D6BFE" stroke-width="2.2" fill="none" stroke-linecap="round"/></symbol>
+  <symbol id="i-douyin" viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 3c.4 2.3 1.9 3.9 4.2 4.1v3.1c-1.6.1-3-.4-4.2-1.2v6.2A5.8 5.8 0 1 1 10.8 9.4v3.2a2.7 2.7 0 1 0 2.7 2.6V3z"/></symbol>
+ </defs>
+</svg>
+
+<header class="top">
+  <div class="logo"><img src="/static/avatar.png" alt="看板娘"></div>
+  <div class="brand"><h1>秋实的大肥鱼连接器</h1><p>QQ × DeepSeek 智能聊天 · 离线整合包</p></div>
+  <div class="sp"></div>
+  <span class="chip" id="topChip"><i class="d"></i><span>未启动</span></span>
+  <span class="creator"><svg><use href="#i-douyin"/></svg>抖音 @秋实KL</span>
+  <button class="iconbtn" id="navDoc" title="环境检测">环境检测</button>
+  <button class="iconbtn" id="navAi" title="让AI帮我装">让AI帮我装</button>
+  <button class="iconbtn" id="theme" title="关于">关于</button>
+</header>
+
+<main>
+<div class="warn hide" id="pathwarn"><svg width="18" height="18"><use href="#i-warn"/></svg>整合包所在路径含中文或空格，可能导致 QQ 启动失败。建议移动到例如 <code>D:\QQAI</code> 后再运行。</div>
+
+<!-- 欢迎 -->
+<section id="vWelcome" class="card view hero duo hide">
+ <div>
+  <span class="badge">由 DeepSeek 驱动 · 完全离线 · 免费分发</span>
+  <h2>三分钟，让你的 QQ<br>拥有一条会聊天的<em>大肥鱼</em></h2>
+  <p class="lead">填一个 Key、一个 QQ 号，手机扫一下码，就能在私聊和群里和它聊天。所有参数已按省钱模式预设好。</p>
+  <div class="feats">
+    <div class="feat"><div class="ic"><svg><use href="#i-box"/></svg></div><b>全部内置</b><span>Python、AstrBot、NapCat、群聊增强插件都在包里，无需联网安装</span></div>
+    <div class="feat"><div class="ic"><svg><use href="#i-coin"/></svg></div><b>省钱默认</b><span>DeepSeek 驱动，限频插话，普通群约 0.5~1 元/天</span></div>
+    <div class="feat"><div class="ic"><svg><use href="#i-mask"/></svg></div><b>原版后台</b><span>人格、插件参数在 AstrBot 原版后台调整，教程通用</span></div>
+  </div>
+  <button class="btn pri xl" id="go">开始配置<svg><use href="#i-arrow"/></svg></button>
+  <div class="meta">预计耗时 3 分钟 · 需要：DeepSeek API Key、一个用来当机器人的 QQ 小号</div>
+  <div class="aihelp" id="aiTip"><svg><use href="#i-bot"/></svg><span>电脑上有 WorkBuddy、豆包、Cursor 这类 AI 助手？<b>让AI帮我装 →</b></span></div>
+ </div>
+ <div class="stage"><span class="bub">你好呀，我是大肥鱼的看板娘～</span><img src="/static/mascot-stand.png" alt="看板娘"></div>
+</section>
+
+<!-- 环境检测 -->
+<section id="vDoctor" class="card view hide">
+  <div class="vhead"><div><h3>环境检测</h3><p>检查这台电脑能不能顺利运行，有问题可以一键修复</p></div><span class="sp"></span>
+    <button class="btn gh" id="docBack"><svg><use href="#i-left"/></svg>返回</button>
+    <button class="btn pri" id="docRun"><svg><use href="#i-redo"/></svg>重新检测</button></div>
+  <div id="docSum"></div>
+  <div class="dlist" id="docList"></div>
+  <div class="hint" style="margin-top:12px"><svg><use href="#i-shield"/></svg>一键修复只会安装微软官方运行库、结束本整合包自己残留的进程，不会改动系统设置或关闭杀毒软件。</div>
+</section>
+
+<!-- 让AI帮我装 -->
+<section id="vAi" class="card view hide">
+  <div class="vhead"><div><h3>让AI帮我装</h3><p>把下面这段话发给你电脑上的 AI 助手，它会照着包里的说明书一步步帮你装好</p></div><span class="sp"></span>
+    <button class="btn gh" id="aiBack"><svg><use href="#i-left"/></svg>返回</button></div>
+  <div class="ai-wrap"><div>
+  <div class="prompt" id="aiPrompt">加载中…</div>
+  <div style="display:flex;gap:10px;margin-top:12px"><button class="btn pri" id="aiCopy"><svg><use href="#i-copy"/></svg>复制这段话</button><span class="sp"></span></div>
+  <div class="ai-apps"><span>WorkBuddy</span><span>豆包</span><span>Cursor</span><span>Codex</span><span>Claude Code</span><span>Trae</span></div>
+  </div><img src="/static/mascot-sit.png" alt=""></div>
+  <div class="ai-steps"><div><b>① 打开 AI 助手</b>让它的工作目录指向这个整合包文件夹</div><div><b>② 粘贴这段话</b>它会读 AGENTS.md，先做环境检测</div><div><b>③ 只需回答三件事</b>DeepSeek Key、机器人 QQ 号、手机扫码</div></div>
+  <div class="hint" style="margin-top:12px"><svg><use href="#i-shield"/></svg>说明书要求 AI 不打印你的 Key、不改原版程序、不开放公网端口、不替你发 QQ 消息。</div>
+</section>
+
+<!-- 向导 -->
+<section id="vWizard" class="card view hide">
+  <div class="stepper">
+    <div class="st" data-s="1"><span class="n"><b>1</b><svg><use href="#i-ok"/></svg></span>API Key</div>
+    <div class="bar-l" data-b="1"><i></i></div>
+    <div class="st" data-s="2"><span class="n"><b>2</b><svg><use href="#i-ok"/></svg></span>机器人 QQ</div>
+    <div class="bar-l" data-b="2"><i></i></div>
+    <div class="st" data-s="3"><span class="n"><b>3</b><svg><use href="#i-ok"/></svg></span>扫码登录</div>
+  </div>
+
+  <div id="s1" class="pane">
+    <h3>连接 DeepSeek</h3>
+    <p class="lead">机器人用 DeepSeek 思考。在 <a href="https://platform.deepseek.com/api_keys" target="_blank">platform.deepseek.com</a> 充值几块钱 → 「API keys」→ 创建，复制 <b>sk-</b> 开头的那串粘贴到下面。</p>
+    <label>API Key <span class="tag">必填</span><small id="keySaved" class="hide">已保存过，留空则沿用</small></label>
+    <div class="field" id="fKey">
+      <span class="pre"><svg><use href="#i-key"/></svg></span>
+      <input id="key" class="mono" type="password" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxx" autocomplete="off" spellcheck="false">
+      <span class="suf"><button class="btn gh sm" id="eye" title="显示/隐藏"><svg><use href="#i-eye"/></svg></button>
+      <button class="btn gh sm" id="testBtn"><svg><use href="#i-bolt"/></svg>测试连接</button></span>
+    </div>
+    <div class="hint" id="keyHint"><svg><use href="#i-shield"/></svg>Key 只保存在本机配置文件里，不会显示、也不会上传到别处。</div>
+    <div id="keyOk"></div>
+    <div class="actions"><span class="pill"><svg><use href="#i-coin"/></svg>默认模型 deepseek-flash · 约 0.5~1 元/天</span><span class="sp"></span>
+      <button class="btn pri" id="next1">下一步<svg><use href="#i-arrow"/></svg></button></div>
+  </div>
+
+  <div id="s2" class="pane hide">
+    <h3>设置机器人 QQ</h3>
+    <p class="lead">只有「机器人 QQ 号」必填。人格、插件等细节以后在 AstrBot 原版后台里调整。</p>
+    <div class="grid2">
+      <div><label>机器人 QQ 号 <span class="tag">必填</span></label>
+        <div class="field" id="fQQ"><span class="pre"><svg><use href="#i-bot"/></svg></span><input id="qq" inputmode="numeric" maxlength="12" placeholder="当机器人的那个小号"></div>
+        <div class="hint" id="qqHint"></div></div>
+      <div><label>管理员 QQ <span class="tag opt">选填</span></label>
+        <div class="field" id="fAdmin"><span class="pre"><svg><use href="#i-user"/></svg></span><input id="admin" inputmode="numeric" maxlength="12" placeholder="填你自己的 QQ"></div>
+        <div class="hint" id="adminHint">填了以后，你可以在 QQ 里使用管理指令</div></div>
+    </div>
+    <div class="note"><svg><use href="#i-warn"/></svg><div><b>防封提醒：</b>请用<b>注册较久、正常使用过</b>的小号当机器人，千万别用主号；新号最容易被风控。别让它刷屏、拉大量群或发广告。</div></div>
+    <div class="actions"><button class="btn gh" id="back2"><svg><use href="#i-left"/></svg>上一步</button><span class="sp"></span>
+      <button class="btn pri" id="next2">保存并启动<svg><use href="#i-arrow"/></svg></button></div>
+  </div>
+
+  <div id="s3" class="pane hide">
+    <h3>手机 QQ 扫码登录</h3>
+    <p class="lead">用<b>机器人那个 QQ 号</b>的手机 QQ 扫码并确认。以后启动一般会自动登录，不用再扫。</p>
+    <div class="login">
+      <div class="qr" id="qr3"></div>
+      <div>
+        <div class="qrstate" id="qrstate3"></div>
+        <ol class="how"><li>打开手机 QQ（登录机器人小号）</li><li>点右上角「＋」→「扫一扫」</li><li>扫码后在手机上点「登录」</li><li>控制台三盏灯全绿，就可以聊天了</li></ol>
+      </div>
+    </div>
+    <div class="actions"><button class="btn gh" id="back3"><svg><use href="#i-left"/></svg>修改设置</button><span class="sp"></span>
+      <button class="btn pri" id="toPanel">进入控制台<svg><use href="#i-arrow"/></svg></button></div>
+  </div>
+</section>
+
+<!-- 控制台 -->
+<section id="vPanel" class="card view hide">
+  <div class="panel-top"><div>
+  <div class="ph-head">
+    <div class="avatar" id="ava"><img src="/static/avatar.png" alt=""><i></i></div>
+    <div><h3>控制台</h3><div class="who" id="who"></div></div>
+    <div class="sp"></div>
+    <span class="big-state" id="bigState"></span>
+  </div>
+  <div class="lights">
+    <div class="light" id="lA"><i class="dot" id="dA"></i><div><b>AstrBot 大脑</b><span id="tA">未启动</span></div></div>
+    <div class="light" id="lN"><i class="dot" id="dN"></i><div><b>NapCat · QQ</b><span id="tN">未启动</span></div></div>
+    <div class="light" id="lC"><i class="dot" id="dC"></i><div><b>QQ 连接</b><span id="tC">等待登录</span></div></div>
+  </div>
+  <div class="ctrl">
+    <button class="btn pri" id="startBtn"><svg><use href="#i-play"/></svg>启动</button>
+    <button class="btn gh" id="restartBtn"><svg><use href="#i-redo"/></svg>重启</button>
+    <button class="btn dg" id="stopBtn"><svg><use href="#i-stop"/></svg>停止</button>
+    <span class="sp"></span>
+    <button class="btn gh" id="reconf"><svg><use href="#i-gear"/></svg>重新配置</button>
+    <button class="btn gh" id="quit" title="停止机器人并退出">退出</button>
+  </div>
+  </div><div class="sitter"><img src="/static/mascot-sit.png" alt="看板娘"></div></div>
+
+  <div class="section">
+    <div class="box">
+      <h4><svg><use href="#i-mask"/></svg>管理后台（原版界面）</h4>
+      <p>人格、说话风格、插件参数都在原版后台里调整，网上的 AstrBot / NapCat 教程可以直接照着做。</p>
+      <button class="entry astr" id="dash"><span class="ei"><svg><use href="#i-mask"/></svg></span>
+        <div><b>打开管理后台（人格/插件设置）</b><span>AstrBot WebUI · 127.0.0.1:6185</span></div><span class="arr"><svg><use href="#i-chev"/></svg></span></button>
+      <div class="crumbs"><span>扩展功能 → 人格设定</span><span>插件 → group_chat_plus 卡片 → 配置</span><span>配置文件 → 人格</span><span>模型提供商</span></div>
+      <div class="cred">账号 <code>astrbot</code> 初始密码 <code id="pw">••••••••••••</code><span class="sp"></span>
+        <button class="btn gh sm" id="showPw"><svg><use href="#i-eye"/></svg>显示</button>
+        <button class="btn gh sm" id="copyPw"><svg><use href="#i-copy"/></svg>复制</button>
+        <button class="btn gh sm" id="resetPw" title="忘记密码时使用"><svg><use href="#i-redo"/></svg>重置</button></div>
+      <p style="margin-top:8px;font-size:12px">首次登录会要求修改密码，改完请自己记住；忘了点「重置」。</p>
+      <button class="entry nap" id="napweb"><span class="ei"><svg><use href="#i-cat"/></svg></span>
+        <div><b>打开 NapCat WebUI</b><span>QQ 登录 · 网络配置 · 127.0.0.1:6099（已自动登录）</span></div><span class="arr"><svg><use href="#i-chev"/></svg></span></button>
+    </div>
+    <div class="box">
+      <div id="qrWrap" class="hide"><h4><svg><use href="#i-scan"/></svg>扫码登录</h4><p>用机器人 QQ 的手机 QQ 扫码</p>
+        <div class="qr" id="qrP" style="margin:14px auto 0"></div></div>
+      <div id="useWrap"><h4><svg><use href="#i-chat"/></svg>怎么用</h4><p>灯全绿后就能聊天：</p>
+        <ol class="how usage" style="margin-top:12px"><li>用你自己的 QQ 私聊机器人</li><li>拉它进群，@它 说话</li><li>群里它会偶尔自己插话（已限频省钱）</li><li>想换人格？点「打开管理后台」→ 左侧「扩展功能」→「人格设定」（教程见 改人格教程.md）</li></ol>
+        <div class="sum" style="grid-template-columns:repeat(3,1fr);margin-top:14px"><div><b id="mdl">deepseek-flash</b>模型</div><div><b>限频插话</b>省钱模式</div><div><b>仅本机</b>后台访问</div></div></div>
+    </div>
+  </div>
+  <details id="logBox"><summary><svg><use href="#i-chev"/></svg>运行日志（出问题时截图给别人看，Key 已自动打码）</summary><pre id="logs">暂无</pre></details>
+</section>
+<footer><div class="by"><svg><use href="#i-douyin"/></svg>作者 <b>秋实KL</b> · 抖音 <b>@秋实KL</b></div><br>免费分发 · 禁止商用 · 基于 AstrBot (AGPL-3.0)、NapCatQQ（有限再分发许可）、astrbot_plugin_group_chat_plus (AGPL-3.0)<br>QQ 机器人非腾讯官方功能，存在封号风险，请自行承担</footer>
+</main>
+<div class="toast" id="toast"></div>
+<script>
+const $=id=>document.getElementById(id);
+const DEMO=new URLSearchParams(location.search).get("demo");
+let st=null,cur=0,pwShown=false,view="";
+const ICON=n=>`<svg><use href="#i-${n}"/></svg>`;
+const CHECK='<svg class="check" viewBox="0 0 36 36"><circle cx="18" cy="18" r="16"/><path d="m11 18.5 5 5 9-10"/></svg>';
+
+/* 关于 */
+document.documentElement.dataset.theme="light";
+$("theme").onclick=()=>{const m=document.createElement("div");m.className="modal";m.innerHTML=`<div class="card about"><img class="ava" src="/static/avatar.png" alt=""><h4>秋实的大肥鱼连接器</h4><p>让 QQ 接上 DeepSeek 的离线整合包</p><div style="margin-top:16px"><div class="row"><span>作者</span><b>秋实KL</b></div><div class="row"><span>抖音</span><b>@秋实KL</b></div><div class="row"><span>基于</span><b>AstrBot · NapCatQQ · group_chat_plus</b></div><div class="row"><span>许可</span><b>免费分发 · 禁止商用</b></div></div><div class="actions"><button class="btn pri" data-v="1">好的</button></div></div>`;m.onclick=e=>{if(e.target.closest("[data-v]")||e.target===m)m.remove()};document.body.appendChild(m)};
+if(DEMO==="about")setTimeout(()=>$("theme").click(),50);
+/* 波纹 */
+document.addEventListener("pointerdown",e=>{const b=e.target.closest(".btn,.entry");if(!b||b.disabled)return;const r=b.getBoundingClientRect(),s=Math.max(r.width,r.height),x=document.createElement("span");x.className="ripple";x.style.cssText=`width:${s}px;height:${s}px;left:${e.clientX-r.left-s/2}px;top:${e.clientY-r.top-s/2}px`;b.appendChild(x);setTimeout(()=>x.remove(),650)});
+
+async function api(p,b){
+  if(DEMO) return demoApi(p,b);
+  const r=await fetch(p,b===undefined?{}:{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)});
+  return r.json();
+}
+function toast(m,bad){const t=$("toast");t.innerHTML=(bad?`<svg style="color:var(--bad)"><use href="#i-x"/></svg>`:`<svg style="color:var(--ok)"><use href="#i-ok"/></svg>`)+m;t.className="toast show"+(bad?" bad":"");clearTimeout(t._t);t._t=setTimeout(()=>t.className="toast"+(bad?" bad":""),2800)}
+function busy(btn,on,txt){if(on){btn._t=btn.innerHTML;btn.innerHTML='<span class="spin"></span>'+(txt||"请稍候");btn.disabled=true;btn.classList.add("loading")}else{btn.innerHTML=btn._t;btn.disabled=false;btn.classList.remove("loading")}}
+function hint(id,msg,cls){const h=$(id);const ic=!msg?"":cls==="bad"?ICON("x"):cls==="ok"?CHECK:id==="keyHint"?ICON("shield"):"";h.innerHTML=ic+(msg||"");h.className="hint "+(cls||"")}
+function fieldState(f,s){$(f).classList.remove("err","ok");if(s){void $(f).offsetWidth;$(f).classList.add(s)}}
+function ask(title,msg,okTxt){return new Promise(res=>{const m=document.createElement("div");m.className="modal";m.innerHTML=`<div class="card"><h4>${title}</h4><p>${msg}</p><div class="actions"><button class="btn gh" data-v="0">取消</button><button class="btn pri" data-v="1">${okTxt||"确定"}</button></div></div>`;m.onclick=e=>{const v=e.target.closest("[data-v]");if(v||e.target===m){m.remove();res(v&&v.dataset.v==="1")}};document.body.appendChild(m)})}
+
+function show(v){if(view===v)return;view=v;["vWelcome","vWizard","vPanel","vDoctor","vAi"].forEach(id=>{const e=$(id);const on=id==="v"+v[0].toUpperCase()+v.slice(1);e.classList.toggle("hide",!on);if(on){e.style.animation="none";void e.offsetWidth;e.style.animation=""}})}
+function step(n){
+  const back=n<cur;cur=n;
+  ["s1","s2","s3"].forEach((s,i)=>{const e=$(s);const on=i+1===n;e.classList.toggle("hide",!on);if(on){e.classList.toggle("back",back);e.style.animation="none";void e.offsetWidth;e.style.animation=""}});
+  document.querySelectorAll(".st").forEach(e=>{const s=+e.dataset.s;e.className="st"+(s===n?" on":s<n?" done":"")});
+  document.querySelectorAll(".bar-l").forEach(e=>e.classList.toggle("fill",+e.dataset.b<n));
+  if(n===1)setTimeout(()=>$("key").focus(),300);if(n===2)setTimeout(()=>$("qq").focus(),300);
+}
+const QQRE=/^[1-9]\d{4,11}$/;
+function checkKey(){const k=$("key").value.trim();
+  if(!k) return st&&st.has_key?"":"请先粘贴 DeepSeek API Key";
+  if(!k.startsWith("sk-")) return "Key 应该以 sk- 开头，请检查是否复制完整";
+  if(k.length<20) return "Key 太短了，好像没复制完整";
+  if(/\s/.test(k)) return "Key 里不能有空格或换行";return ""}
+$("go").onclick=()=>{show("wizard");step(1)};
+$("eye").onclick=()=>{$("key").type=$("key").type==="password"?"text":"password"};
+$("key").oninput=()=>{fieldState("fKey");$("keyOk").innerHTML="";hint("keyHint","Key 只保存在本机配置文件里，不会显示、也不会上传到别处。")};
+$("key").onkeydown=e=>{if(e.key==="Enter")$("testBtn").click()};
+$("testBtn").onclick=async()=>{
+  const e=checkKey();if(e||!$("key").value.trim()){fieldState("fKey","err");return hint("keyHint",e||"请先粘贴 API Key","bad")}
+  busy($("testBtn"),true,"测试中");$("keyOk").innerHTML="";
+  try{const r=await api("/api/test-key",{api_key:$("key").value.trim()});fieldState("fKey",r.ok?"ok":"err");
+    if(r.ok){hint("keyHint","");$("keyOk").innerHTML=`<div class="okcard">${CHECK}<div><b>连接成功</b><span>${r.msg}</span></div></div>`}else hint("keyHint",r.msg,"bad")}
+  catch(x){hint("keyHint","测试失败：控制台好像已关闭，请重新打开","bad")}
+  busy($("testBtn"),false)};
+$("next1").onclick=()=>{const e=checkKey();if(e){fieldState("fKey","err");return hint("keyHint",e,"bad")}step(2)};
+$("back2").onclick=()=>step(1);
+function checkQQ(){let ok=true;const q=$("qq").value.trim(),a=$("admin").value.trim();
+  if(!QQRE.test(q)){ok=false;fieldState("fQQ","err");hint("qqHint",q?"QQ 号应为 5~12 位数字，不能以 0 开头":"请填写机器人的 QQ 号","bad")}else{fieldState("fQQ","ok");hint("qqHint","格式正确","ok")}
+  if(a&&!QQRE.test(a)){ok=false;fieldState("fAdmin","err");hint("adminHint","QQ 号应为 5~12 位数字，不能以 0 开头","bad")}
+  else if(a&&a===q){ok=false;fieldState("fAdmin","err");hint("adminHint","管理员请填你自己的 QQ，不能和机器人相同","bad")}
+  else{fieldState("fAdmin",a?"ok":"");hint("adminHint",a?"格式正确":"填了以后，你可以在 QQ 里使用管理指令",a?"ok":"")}
+  return ok}
+["qq","admin"].forEach(i=>{$(i).oninput=()=>{$(i).value=$(i).value.replace(/\D/g,"")};$(i).onblur=()=>{if($(i).value)checkQQ()};$(i).onkeydown=e=>{if(e.key==="Enter")$("next2").click()}});
+$("next2").onclick=async()=>{
+  if(!checkQQ()) return;const b=$("next2");busy(b,true,"正在保存并启动");
+  const r=await api("/api/save",{api_key:$("key").value.trim(),qq:$("qq").value.trim(),admin_qq:$("admin").value.trim()});
+  if(!r.ok){busy(b,false);toast(r.msg,true);if(/Key/.test(r.msg)){step(1);hint("keyHint",r.msg,"bad")}return}
+  $("key").value="";await api("/api/start",{});busy(b,false);toast("配置已保存，正在启动…");step(3);refresh()};
+$("back3").onclick=()=>step(2);
+$("toPanel").onclick=()=>{show("panel");refresh()};
+$("reconf").onclick=()=>{fill();show("wizard");cur=0;step(1)};
+async function act(btn,p,txt){busy(btn,true,txt);const r=await api(p,{});busy(btn,false);toast(r.msg,!r.ok);refresh()}
+$("startBtn").onclick=()=>act($("startBtn"),"/api/start","启动中");
+$("stopBtn").onclick=async()=>{if(await ask("停止机器人？","停止后 QQ 上的机器人会下线，随时可以再点「启动」。","停止"))act($("stopBtn"),"/api/stop","停止中")};
+$("restartBtn").onclick=()=>act($("restartBtn"),"/api/restart","重启中");
+$("dash").onclick=()=>{if(st.dashboard)api("/api/open-dashboard",{});else toast("管理后台还没就绪：请先点「启动」，等「AstrBot 大脑」变绿",true)};
+$("napweb").onclick=()=>{if(st.napcat_webui)api("/api/open-napcat",{});else toast("NapCat 还没就绪：请先点「启动」，稍等几秒",true)};
+$("showPw").onclick=()=>{pwShown=!pwShown;$("showPw").innerHTML=ICON("eye")+(pwShown?"隐藏":"显示");render()};
+$("copyPw").onclick=async()=>{try{await navigator.clipboard.writeText(st.dashboard_password);toast("密码已复制，到后台粘贴即可")}catch(e){toast("复制失败，请点「显示」后手动输入",true)}};
+$("resetPw").onclick=async()=>{if(!await ask("重置后台密码？","会生成新的初始密码，并自动重启 AstrBot（约 20 秒）。","重置"))return;const r=await api("/api/reset-dashboard-password",{});pwShown=true;$("showPw").innerHTML=ICON("eye")+"隐藏";toast(r.msg,!r.ok);refresh()};
+$("quit").onclick=async()=>{if(!await ask("退出控制台？","退出后机器人会停止工作。下次双击桌面「秋实的大肥鱼连接器」即可再次打开。","退出"))return;await api("/api/quit",{});document.querySelector("main").innerHTML='<section class="card view hero"><h2>已退出</h2><p class="lead">机器人已停止，可以关闭此窗口。</p></section>'};
+$("logBox").ontoggle=refresh;
+function fill(){const s=st.settings;$("qq").value=s.qq||"";$("admin").value=s.admin_qq||"";
+  $("keySaved").classList.toggle("hide",!st.has_key);$("key").placeholder=st.has_key?"已保存（留空则沿用原来的 Key）":"sk-xxxxxxxxxxxxxxxxxxxxxxxx";
+  $("pathwarn").classList.toggle("hide",!st.path_warning)}
+function light(l,d,t,state,txt){$(l).className="light "+state;$(d).className="dot "+state;$(t).textContent=txt}
+function qrRender(id,stateId){
+  const b=$(id),k=st.connected?"done":st.qr?"qr:"+st.qr_ts:st.napcat==="ok"?"wait":"off";
+  if(b._k===k)return;b._k=k;b.className="qr"+(st.connected?" done":"");
+  if(st.connected)b.innerHTML=`<div class="okbig">${CHECK}<b>登录成功</b><span>机器人已上线，可以去 QQ 聊天了</span></div>`;
+  else if(st.qr){const src=(DEMO?"/static/demo-qr.png":"/api/qr")+"?t="+st.qr_ts;b.innerHTML=`<div class="img"><img src="${src}" alt="登录二维码"></div>`}
+  else b.innerHTML=`<div class="ph"><div class="skel"></div>${st.napcat==="ok"?"正在获取二维码…<br>登录过的账号会自动登录":"点「启动」后这里会出现二维码"}</div>`;
+  if(stateId){const s=$(stateId);s.innerHTML=st.connected?`<span style="color:var(--ok)">${ICON("ok")}</span>已登录`:st.qr?'<i class="dot wait"></i>等待手机扫码确认…':'<i class="dot wait"></i>正在启动 QQ…';s.querySelectorAll("svg").forEach(x=>x.style.cssText="width:16px;height:16px")}
+}
+function render(){
+  const A=st.astrbot,N=st.napcat,C=st.connected;
+  light("lA","dA","tA",A==="ok"?"ok":A==="starting"?"wait":"",A==="ok"?"运行中 · 端口 6199":A==="starting"?"启动中…（约 20 秒）":"未启动");
+  light("lN","dN","tN",N==="ok"?(C?"ok":"wait"):"",N==="ok"?(C?"已登录":st.qr?"等待扫码":"登录中…"):"未启动");
+  light("lC","dC","tC",C?"ok":"",C?"一切正常，可以聊天了":"等待登录");
+  const on=C,mid=!C&&(N==="ok"||A!=="off");
+  $("bigState").className="big-state"+(on?" on":mid?" mid":"");
+  $("bigState").innerHTML=`<i class="dot ${on?"ok":mid?"wait":""}"></i>${on?"机器人在线":mid?"正在启动":"已停止"}`;
+  const tc=$("topChip");tc.className="chip"+(on?" on":mid?" mid":"");tc.querySelector("span").textContent=on?"在线":mid?"启动中":"未启动";
+  $("ava").classList.toggle("on",on);
+  $("who").textContent=`QQ ${st.settings.qq||"-"}${st.settings.admin_qq?"  ·  管理员 "+st.settings.admin_qq:""}`;
+  $("pw").textContent=pwShown?(st.dashboard_password||"（首次启动后生成）"):"••••••••••••";
+  $("startBtn").disabled=A!=="off"&&N==="ok";
+  const showQr=!C&&N==="ok";$("qrWrap").classList.toggle("hide",!showQr);$("useWrap").classList.toggle("hide",showQr);
+  qrRender("qr3","qrstate3");if(showQr)qrRender("qrP");
+}
+async function refresh(){
+  try{st=await api("/api/status")}catch(e){return}
+  render();
+  if(view==="panel"&&$("logBox").open){const l=await api("/api/logs");$("logs").textContent=((l.napcat||"")+"\n"+(l.astrbot||"")).trim()||"暂无"}
+}
+async function boot(){
+  st=await api("/api/status");fill();
+  const D=DEMO||"";
+  if(D==="welcome"||(!D&&!st.configured))show("welcome");
+  else if(D.startsWith("step")){show("wizard");step(+D[4]);
+    if(D==="step1err"){$("key").value="sk-abc";fieldState("fKey","err");hint("keyHint","Key 太短了，好像没复制完整","bad")}
+    if(D==="step1bad"){$("key").value="sk-demo0000000000000000000000000000";fieldState("fKey","err");hint("keyHint","Key 无效或已被删除（401），请到 DeepSeek 后台重新复制","bad")}
+    if(D==="step1ok"){$("key").value="sk-demo0000000000000000000000000000";$("testBtn").click()}
+    if(D==="step1load"){$("key").value="sk-demo0000000000000000000000000000";busy($("testBtn"),true,"测试中")}
+    if(D==="step2"){$("qq").value="123456789";$("admin").value="987654321";checkQQ()}
+    if(D==="step2err"){$("qq").value="0123";$("admin").value="";checkQQ()}
+    if(D==="step2same"){$("qq").value="123456789";$("admin").value="123456789";checkQQ()}}
+  else if(D==="doctor"||D==="doctorfix"){show("doctor");runDoctor()}
+  else if(D==="ai"){show("ai");loadPrompt()}
+  else{show("panel");if(D==="panelpw"){pwShown=true;$("showPw").innerHTML=ICON("eye")+"隐藏"}}
+  render();if(!DEMO||D==="anim"||D==="flow")setInterval(refresh,DEMO?1500:2000);
+}
+let backTo="welcome";
+function go2(v){if(view!=="doctor"&&view!=="ai")backTo=view||"welcome";show(v)}
+$("navDoc").onclick=()=>{go2("doctor");runDoctor()};
+$("navAi").onclick=$("aiTip").onclick=()=>{go2("ai");loadPrompt()};
+$("docBack").onclick=$("aiBack").onclick=()=>{show(backTo);if(backTo==="panel")refresh()};
+const SICON={ok:"ok",warn:"warn",fail:"x",skip:"chev"};
+function esc(t){return String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+async function runDoctor(){const b=$("docRun");busy(b,true,"检测中");$("docList").innerHTML=Array(6).fill('<div class="ditem skel" style="height:52px;animation:breath 1.4s infinite"></div>').join("");$("docSum").innerHTML="";
+  const r=await api("/api/doctor");busy(b,false);const cs=r.checks||[];
+  if(!cs.length){$("docSum").innerHTML=`<div class="dsum bad">${ICON("x")}${esc(r.msg||"检测失败")}</div>`;$("docList").innerHTML="";return}
+  $("docSum").innerHTML=r.ok?`<div class="dsum ok">${ICON("ok")}可以运行${r.warns?`（${r.warns} 项提示，可选修复）`:""}</div>`:`<div class="dsum bad">${ICON("x")}有 ${r.fails} 项需要处理，按提示修复后点「重新检测」</div>`;
+  $("docList").innerHTML=cs.map(c=>`<div class="ditem ${c.status}"><span class="st"><svg><use href="#i-${SICON[c.status]}"/></svg></span><div><b>${esc(c.name)}</b><div class="d">${esc(c.detail)}</div>${(c.status==="warn"||c.status==="fail")&&c.fix?`<div class="f">${esc(c.fix)}</div>`:""}</div>${c.auto_fix&&c.status!=="ok"?`<button class="btn pri sm" data-fix="${c.id}">一键修复</button>`:""}</div>`).join("")}
+$("docRun").onclick=runDoctor;
+$("docList").onclick=async e=>{const b=e.target.closest("[data-fix]");if(!b)return;busy(b,true,"修复中");const r=await api("/api/fix",{item:b.dataset.fix});busy(b,false);toast(r.msg,!r.ok);if(r.ok)runDoctor()};
+let promptTxt="";
+async function loadPrompt(){if(!promptTxt){try{promptTxt=(await (await fetch("/static/ai-prompt.txt")).text()).trim()}catch(e){promptTxt="请阅读整合包里的 AGENTS.md，按步骤帮我安装并启动。"}}$("aiPrompt").textContent=promptTxt}
+$("aiCopy").onclick=async()=>{try{await navigator.clipboard.writeText(promptTxt)}catch(e){const t=document.createElement("textarea");t.value=promptTxt;document.body.appendChild(t);t.select();document.execCommand("copy");t.remove()}toast("已复制，粘贴给你的 AI 助手就行")};
+/* ---- 仅供截图/演示（?demo=...），正式运行不会走这里 ---- */
+let demoT=0,demoSaved=false;
+function demoApi(p){
+  const base={configured:true,has_key:true,settings:{qq:"123456789",admin_qq:"987654321"},dashboard:true,napcat_webui:true,dashboard_user:"astrbot",dashboard_password:"Demo7xKq2Pw9Lm4R",path_warning:false,is_windows:true,qr_ts:1};
+  if(p==="/api/test-key")return new Promise(r=>setTimeout(()=>r({ok:true,msg:"账户余额 9.86 CNY，可以正常使用"}),DEMO==="step1ok"?0:900));
+  if(p==="/api/logs")return{napcat:"[NapCat] 二维码已保存到 …\\cache\\qrcode.png",astrbot:"[Core] AstrBot v4.29.3 启动完成"};
+  if(p==="/api/save")demoSaved=true;
+  if(p==="/api/doctor"){const fixed=DEMO==="doctorfix";const C=(id,name,status,detail,fix,af)=>({id,name,status,detail,fix:fix||"",auto_fix:!!af});
+    const cs=[C("os","系统版本","ok","Windows 11 · 内部版本 22631"),C("arch","64 位系统","ok","x64"),
+      fixed?C("webview2","WebView2 运行库（控制台窗口）","ok","版本 130.0.2849.56"):C("webview2","WebView2 运行库（控制台窗口）","warn","未安装：控制台会改用浏览器打开，功能不受影响","点「一键修复」安装 Microsoft Edge WebView2 运行库",true),
+      C("vcredist","VC++ 2015-2022 运行库","ok","已安装"),C("bundle","整合包文件","ok","Python、AstrBot、NapCat 都在"),C("qqnt","QQ NT 内核（NapCat 自带）","ok","已内置，无需另装 QQ"),
+      C("port_6185","端口 6185（AstrBot 管理后台）","ok","空闲"),
+      fixed?C("port_6199","端口 6199（AstrBot ↔ NapCat 连接）","ok","空闲"):C("port_6199","端口 6199（AstrBot ↔ NapCat 连接）","fail","被其他程序占用：python","关掉占用它的程序（常见：另一份 AstrBot / NapCat / QQ 机器人）。若是本整合包残留进程，点「一键修复」结束它",true),
+      C("port_6099","端口 6099（NapCat WebUI）","ok","空闲"),C("disk","磁盘空间","ok","剩余 86.4 GB"),C("perms","文件夹写入权限","ok","可写"),
+      C("path","安装路径","warn","D:\\QQ 机器人\\秋实的大肥鱼连接器（含中文/全角字符、空格）","QQ 内核遇到这类路径容易启动失败：把整个文件夹移到例如 D:\\QQAI 再运行"),
+      C("av","杀毒软件","warn","Windows 安全中心实时保护已开启","若出现文件被删、启动闪退：在「Windows 安全中心 → 病毒和威胁防护 → 排除项」里添加整合包文件夹（需你本人操作）"),
+      C("deepseek","连接 DeepSeek","ok","api.deepseek.com 可以访问")];
+    const f=cs.filter(c=>c.status==="fail").length,w=cs.filter(c=>c.status==="warn").length;
+    return new Promise(r=>setTimeout(()=>r({schema:"qqai-doctor/1",ok:f===0,fails:f,warns:w,checks:cs}),600))}
+  if(p==="/api/fix")return new Promise(r=>setTimeout(()=>r({ok:true,msg:"已修复"}),800));
+  if(p!=="/api/status")return{ok:true,msg:"ok"};
+  const D=DEMO;
+  if(D==="flow"){if(!demoSaved)return{...base,configured:false,has_key:false,astrbot:"off",napcat:"off",connected:false,qr:false};demoT++;
+    return demoT<2?{...base,astrbot:"starting",napcat:"ok",connected:false,qr:false}:demoT<5?{...base,astrbot:"ok",napcat:"ok",connected:false,qr:true}:{...base,astrbot:"ok",napcat:"ok",connected:true,qr:false}}
+  if(D==="anim"){demoT++;return demoT<3?{...base,astrbot:"starting",napcat:"ok",connected:false,qr:false}:demoT<6?{...base,astrbot:"ok",napcat:"ok",connected:false,qr:true}:{...base,astrbot:"ok",napcat:"ok",connected:true,qr:false}}
+  if(D==="welcome"||D==="doctor"||D==="doctorfix"||D==="ai"||D.startsWith("step1")||D.startsWith("step2"))return{...base,configured:false,has_key:false,astrbot:"off",napcat:"off",connected:false,qr:false};
+  if(D==="step3"||D==="panelqr")return{...base,astrbot:"ok",napcat:"ok",connected:false,qr:true};
+  if(D==="step3ok")return{...base,astrbot:"ok",napcat:"ok",connected:true,qr:false};
+  if(D==="panelstart")return{...base,astrbot:"starting",napcat:"ok",connected:false,qr:false};
+  if(D==="paneloff")return{...base,astrbot:"off",napcat:"off",connected:false,qr:false,path_warning:true};
+  return{...base,astrbot:"ok",napcat:"ok",connected:true,qr:false};
+}
+boot();
+</script>
+</body>
+</html>

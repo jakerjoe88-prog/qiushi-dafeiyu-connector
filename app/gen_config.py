@@ -18,7 +18,6 @@ PLUGIN_NAME = "astrbot_plugin_group_chat_plus"
 PROVIDER_SOURCE_ID = "deepseek_source"
 PROVIDER_ID = "deepseek_flash"
 DEFAULT_MODEL = "deepseek-flash"
-DEFAULT_PERSONA_ID = "oneclick_persona"
 WS_PORT = 6199
 
 # ---- 省钱默认值：AstrBot ----
@@ -147,7 +146,7 @@ def astrbot_patch(api_key: str, qq: str, admin_qq: str = "", model: str = DEFAUL
             "id": "napcat",
             "type": "aiocqhttp",
             "enable": True,
-            "ws_reverse_host": "0.0.0.0",
+            "ws_reverse_host": "127.0.0.1",
             "ws_reverse_port": WS_PORT,
             "ws_reverse_token": "",
         }],
@@ -166,20 +165,36 @@ def astrbot_patch(api_key: str, qq: str, admin_qq: str = "", model: str = DEFAUL
         },
         "agent_runner": {"runner_type": "local", "config": {
             "model": {"provider_id": PROVIDER_ID},
-            "persona": {"persona_id": DEFAULT_PERSONA_ID},
             "compression": {"max_turns": ASTRBOT_TUNING["max_turns"], "overflow_strategy": "truncate_by_turns"},
             "misc": {"max_steps": 8},
         }},
         "admins_id": ["astrbot", *admins],
+        # 管理后台只监听本机，避免局域网/公网访问
+        "dashboard": {"host": "127.0.0.1"},
     }
 
 
+
+
 def build_astrbot_config(api_key, qq, admin_qq="", astrbot_dir=None, existing=None, model=DEFAULT_MODEL):
-    base = existing if existing else load_astrbot_default(astrbot_dir)
-    return deep_merge(base, astrbot_patch(api_key, qq, admin_qq, model))
+    patch = astrbot_patch(api_key, qq, admin_qq, model)
+    if existing:
+        existing = copy.deepcopy(existing)
+        for k in ("provider_sources", "provider", "platform"):  # 按 id 更新/追加，不删用户自己加的
+            lst = [x for x in existing.get(k, []) if x.get("id") != patch[k][0]["id"]]
+            existing[k] = [patch[k][0], *lst]
+        admins = [a for a in existing.get("admins_id", []) if a not in patch["admins_id"]]
+        existing["admins_id"] = [*patch["admins_id"], *admins]
+        patch = {}
+        patch["agent_runner"] = {"config": {"model": {"provider_id": PROVIDER_ID}}}
+        return deep_merge(existing, patch)
+    return deep_merge(load_astrbot_default(astrbot_dir), patch)
 
 
-def build_plugin_config(schema: dict, admin_qq: str = "", persona_name: str = "") -> dict:
+ADMIN_LIST_KEYS = ("plugin_gcp_reset_allowed_user_ids", "plugin_gcp_reset_here_allowed_user_ids")
+
+
+def build_plugin_config(schema: dict, admin_qq: str = "") -> dict:
     cfg = {}
     for k, v in schema.items():
         if isinstance(v, dict) and "default" in v:
@@ -190,7 +205,7 @@ def build_plugin_config(schema: dict, admin_qq: str = "", persona_name: str = ""
         if k in schema:  # 只写上游存在的键
             cfg[k] = v
     if admin_qq:
-        for k in ("plugin_gcp_reset_allowed_user_ids", "plugin_gcp_reset_here_allowed_user_ids"):
+        for k in ADMIN_LIST_KEYS:
             if k in schema:
                 cfg[k] = [admin_qq]
     return cfg
@@ -223,13 +238,6 @@ def build_napcat_onebot(qq: str) -> dict:
     }
 
 
-def persona_prompt(name: str) -> str:
-    name = name or "小助手"
-    return (f"你叫{name}，是这个 QQ 群里一个友善、简洁的聊天伙伴。"
-            "回答尽量口语化、简短（一般不超过三句话），不要使用 Markdown。"
-            "不知道的事情就直说不知道，不编造。")
-
-
 def _dump(path, obj):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
@@ -241,31 +249,54 @@ def main(argv=None):
     p.add_argument("--api-key", required=True)
     p.add_argument("--qq", required=True)
     p.add_argument("--admin-qq", default="")
-    p.add_argument("--persona", default="小助手")
     p.add_argument("--model", default=DEFAULT_MODEL)
     p.add_argument("--astrbot-dir", required=True)
     p.add_argument("--napcat-dir", required=True)
     a = p.parse_args(argv)
-    validate_inputs(a.api_key, a.qq, a.admin_qq)
+    write_all(a.api_key, a.qq, a.admin_qq, a.astrbot_dir, a.napcat_dir, a.model)
+    print("OK")
 
-    data = os.path.join(a.astrbot_dir, "data")
+
+def write_all(api_key, qq, admin_qq, astrbot_dir, napcat_dir, model=DEFAULT_MODEL):
+    """生成全部配置。api_key 为空时沿用已保存的 Key。
+
+    首次：写入全部省钱默认值。再次配置：只更新 Key/QQ/管理员，保留用户在管理后台里改过的设置。
+    """
+    api_key = (api_key or "").strip() or saved_api_key(astrbot_dir)
+    validate_inputs(api_key, qq, admin_qq)
+    data = os.path.join(astrbot_dir, "data")
     cmd_path = os.path.join(data, "cmd_config.json")
     existing = None
     if os.path.exists(cmd_path):
         with open(cmd_path, encoding="utf-8-sig") as f:
             existing = json.load(f)
-    _dump(cmd_path, build_astrbot_config(a.api_key, a.qq, a.admin_qq, a.astrbot_dir, existing, a.model))
+    _dump(cmd_path, build_astrbot_config(api_key, qq, admin_qq, astrbot_dir, existing, model))
 
-    schema_path = os.path.join(data, "plugins", PLUGIN_NAME, "_conf_schema.json")
-    with open(schema_path, encoding="utf-8-sig") as f:
-        schema = json.load(f)
-    _dump(os.path.join(data, "config", f"{PLUGIN_NAME}_config.json"),
-          build_plugin_config(schema, a.admin_qq, a.persona))
+    plugin_cfg = os.path.join(data, "config", f"{PLUGIN_NAME}_config.json")
+    if os.path.exists(plugin_cfg):
+        with open(plugin_cfg, encoding="utf-8-sig") as f:
+            cfg = json.load(f)
+        if admin_qq:
+            for k in ADMIN_LIST_KEYS:
+                if k in cfg:
+                    cfg[k] = [admin_qq]
+    else:
+        with open(os.path.join(data, "plugins", PLUGIN_NAME, "_conf_schema.json"), encoding="utf-8-sig") as f:
+            cfg = build_plugin_config(json.load(f), admin_qq)
+    _dump(plugin_cfg, cfg)
 
-    _dump(os.path.join(a.napcat_dir, "config", f"onebot11_{a.qq}.json"), build_napcat_onebot(a.qq))
-    _dump(os.path.join(data, "oneclick_persona.json"),
-          {"persona_id": DEFAULT_PERSONA_ID, "name": a.persona, "prompt": persona_prompt(a.persona)})
-    print("OK")
+    _dump(os.path.join(napcat_dir, "config", f"onebot11_{qq}.json"), build_napcat_onebot(qq))
+
+
+def saved_api_key(astrbot_dir) -> str:
+    try:
+        with open(os.path.join(astrbot_dir, "data", "cmd_config.json"), encoding="utf-8-sig") as f:
+            for src in json.load(f).get("provider_sources", []):
+                if src.get("id") == PROVIDER_SOURCE_ID and src.get("key"):
+                    return src["key"][0]
+    except (OSError, ValueError):
+        pass
+    return ""
 
 
 if __name__ == "__main__":

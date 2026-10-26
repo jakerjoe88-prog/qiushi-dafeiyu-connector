@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "qqai-doctor/1",
+  "title": "秋实的大肥鱼连接器 环境检测报告",
+  "type": "object",
+  "required": ["schema", "ok", "fails", "warns", "root", "time", "checks"],
+  "properties": {
+    "schema": {"const": "qqai-doctor/1"},
+    "ok": {"type": "boolean", "description": "true = 没有 fail 项，可以运行"},
+    "fails": {"type": "integer", "minimum": 0},
+    "warns": {"type": "integer", "minimum": 0},
+    "root": {"type": "string"},
+    "time": {"type": "string"},
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "status", "detail", "fix", "auto_fix"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"enum": ["os", "arch", "webview2", "vcredist", "bundle", "qqnt", "port_6185", "port_6199", "port_6099", "port_6188", "disk", "perms", "path", "av", "deepseek"]},
+          "name": {"type": "string"},
+          "status": {"enum": ["ok", "warn", "fail", "skip"]},
+          "detail": {"type": "string"},
+          "fix": {"type": "string", "description": "给人看的中文修复建议"},
+          "auto_fix": {"type": "boolean", "description": "true = 可执行 tools/fix.ps1 -Item <id>"}
+        }
+      }
+    }
+  }
+}

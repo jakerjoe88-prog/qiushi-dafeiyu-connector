@@ -1,0 +1,12 @@
+{
+  "astrbot_tag": "v4.29.3",
+  "astrbot_src": "https://github.com/AstrBotDevs/AstrBot/archive/refs/tags/v4.29.3.zip",
+  "astrbot_dashboard": "https://github.com/AstrBotDevs/AstrBot/releases/download/v4.29.3/AstrBot-v4.29.3-dashboard.zip",
+  "napcat_tag": "v4.18.41",
+  "napcat_node": "https://github.com/NapNeko/NapCatQQ/releases/download/v4.18.41/NapCat.Shell.Windows.Node.zip",
+  "napcat_node_sha256": "51fbb10e7bcd56b0c2a6de86c37811e7518330e48a137ac689ab1e4d8627d3f0",
+  "napcat_license": "https://raw.githubusercontent.com/NapNeko/NapCatQQ/v4.18.41/LICENSE",
+  "plugin_zip": "https://github.com/Him666233/astrbot_plugin_group_chat_plus/archive/refs/heads/main.zip",
+  "python_embed": "https://www.python.org/ftp/python/3.12.10/python-3.12.10-embed-amd64.zip",
+  "python_version": "3.12"
+}

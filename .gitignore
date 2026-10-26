@@ -1,4 +1,24 @@
-tests/upstream/
-dist/
-__pycache__/
+
+# Python / IDE
+# 微软运行库（不打包、不入库）
+# 构建产物（离线 zip 只走 GitHub Release，不进源码库）
+# 测试用上游镜像（体积大，不进源码库）
+# 运行时 / 用户数据（切勿提交）
+**/cmd_config.json
+*.exe.bak
+*.log
+*.py[cod]
+*.swp
+.idea/
 .pytest_cache/
+.venv/
+.vscode/
+/workspace/offline_cache/
+__pycache__/
+data/
+dist/
+doctor-report.json
+logs/
+settings.json
+tests/upstream/
+tools/redist/

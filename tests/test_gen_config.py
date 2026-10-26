@@ -4,7 +4,7 @@ import pytest
 HERE = os.path.dirname(__file__)
 ROOT = os.path.dirname(HERE)
 UP = os.path.join(HERE, "upstream")
-sys.path.insert(0, os.path.join(ROOT, "core"))
+sys.path.insert(0, os.path.join(ROOT, "app"))
 import gen_config as g  # noqa: E402
 
 KEY = "sk-" + "a" * 32
@@ -110,12 +110,26 @@ def test_cli_end_to_end(tmp_path):
     plug = astr / "data/plugins/astrbot_plugin_group_chat_plus"; plug.mkdir(parents=True)
     shutil.copy(os.path.join(UP, "_conf_schema.json"), plug)
     shutil.copytree(os.path.join(UP, "astrbot/astrbot"), astr / "astrbot")
-    g.main(["--api-key", KEY, "--qq", QQ, "--persona", "阿星", "--astrbot-dir", str(astr), "--napcat-dir", str(nap)])
+    g.main(["--api-key", KEY, "--qq", QQ, "--astrbot-dir", str(astr), "--napcat-dir", str(nap)])
     assert json.load(open(astr / "data/cmd_config.json"))["platform"][0]["id"] == "napcat"
     assert (astr / "data/config/astrbot_plugin_group_chat_plus_config.json").exists()
     assert (nap / f"config/onebot11_{QQ}.json").exists()
-    assert "阿星" in json.load(open(astr / "data/oneclick_persona.json"))["prompt"]
+    c0 = json.load(open(astr / "data/cmd_config.json"))
+    assert "persona" not in c0["agent_runner"]["config"] or c0["agent_runner"]["config"]["persona"].get("persona_id") != "oneclick_persona"
+    assert c0["dashboard"]["host"] == "127.0.0.1"
+    # 模拟用户在管理后台改了设置 + 自己加了一个 provider / 改了插件
+    c0["provider_settings"]["streaming_response"] = True
+    c0["provider"].append({"id": "user_own", "type": "x"})
+    json.dump(c0, open(astr / "data/cmd_config.json", "w"))
+    pc = astr / "data/config/astrbot_plugin_group_chat_plus_config.json"
+    p0 = json.load(open(pc)); p0["initial_probability"] = 0.3; json.dump(p0, open(pc, "w"))
     # 再跑一次（已有配置时合并而不是覆盖）
     g.main(["--api-key", "sk-" + "b" * 32, "--qq", QQ, "--astrbot-dir", str(astr), "--napcat-dir", str(nap)])
     c = json.load(open(astr / "data/cmd_config.json"))
     assert c["provider_sources"][0]["key"] == ["sk-" + "b" * 32] and len(c["platform"]) == 1
+    assert c["provider_settings"]["streaming_response"] is True          # 用户改动保留
+    assert {p["id"] for p in c["provider"]} == {"deepseek_flash", "user_own"}
+    assert json.load(open(pc))["initial_probability"] == 0.3
+    # 空 Key = 沿用已保存的
+    g.write_all("", QQ, "", str(astr), str(nap))
+    assert json.load(open(astr / "data/cmd_config.json"))["provider_sources"][0]["key"] == ["sk-" + "b" * 32]
