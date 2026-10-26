@@ -8,5 +8,11 @@
   "napcat_license": "https://raw.githubusercontent.com/NapNeko/NapCatQQ/v4.18.41/LICENSE",
   "plugin_zip": "https://github.com/Him666233/astrbot_plugin_group_chat_plus/archive/refs/heads/main.zip",
   "python_embed": "https://www.python.org/ftp/python/3.12.10/python-3.12.10-embed-amd64.zip",
-  "python_version": "3.12"
+  "python_version": "3.12",
+  "meme_manager": "5.2.7",
+  "meme_manager_zip": "https://astrbot-cloud-test-s3.astrbot.app/plugins/releases/anka/meme_manager/5.2.7/meme_manager-5.2.7-361f9c6bcfd0.zip",
+  "meme_manager_repo": "https://github.com/anka-afk/astrbot_plugin_meme_manager",
+  "meme_pack": "deepseek-fanart-meme-pack@v1.0.0",
+  "meme_pack_repo": "https://github.com/anka-afk/deepseek-fanart-meme-pack",
+  "meme_pack_note": "images NOT redistributed (LICENSE unspecified); first-run download"
 }

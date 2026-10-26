@@ -25,6 +25,7 @@ APP_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(APP_DIR)
 sys.path.insert(0, APP_DIR)
 import gen_config  # noqa: E402
+import meme_pack_bootstrap  # noqa: E402
 
 RUNTIME = os.environ.get("QQAI_RUNTIME", os.path.join(ROOT, "runtime"))
 ASTRBOT_DIR = os.path.join(RUNTIME, "AstrBot")
@@ -261,6 +262,7 @@ def alive(name: str) -> bool:
 
 
 def start_all() -> dict:
+    meme_pack_bootstrap.ensure_default_pack_async(ASTRBOT_DIR)
     s = load_settings()
     if not s.get("configured"):
         return {"ok": False, "msg": "请先完成配置"}
@@ -506,6 +508,7 @@ class Handler(BaseHTTPRequestHandler):
                                   {"ok": True, "msg": "控制台已退出"})[2],
             "/api/fix": lambda: fix(str(body.get("item", ""))),
             "/api/open-logs": lambda: (os.startfile(LOG_DIR) if WIN else None, {"ok": True})[1],
+            "/api/meme-pack-status": lambda: {"ok": True, **meme_pack_bootstrap.status(), "ready": meme_pack_bootstrap.pack_ready(ASTRBOT_DIR)},
         }
         fn = routes.get(self.path)
         if not fn:
@@ -537,6 +540,8 @@ def main():
         return
     set_app_id()
     threading.Thread(target=brand_folder, daemon=True).start()
+    meme_pack_bootstrap.ensure_runtime_scaffold(ASTRBOT_DIR)
+    meme_pack_bootstrap.ensure_default_pack_async(ASTRBOT_DIR)
     url = f"http://127.0.0.1:{PORT}/"
     if port_listening(PORT):  # 已经开着：直接打开页面
         webbrowser.open(url)

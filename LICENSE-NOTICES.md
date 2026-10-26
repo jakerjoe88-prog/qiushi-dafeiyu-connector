@@ -38,15 +38,26 @@ Copyright © 2024 Mlikiowa
 - 源码：https://github.com/Him666233/astrbot_plugin_group_chat_plus （本包为 V1.2.3.hotfix.2，原样未修改）
 - 许可全文：`licenses/group_chat_plus-LICENSE.txt`
 
-## 4. Python 与第三方库
+## 4. 表情包管理器 meme_manager —— MIT
+- 源码：https://github.com/anka-afk/astrbot_plugin_meme_manager （本包为 v5.2.7，原样未修改）
+- 许可全文：`licenses/meme_manager-LICENSE-MIT.txt`
+- 依赖（faiss-cpu、pillow、boto3 等）已预装进 `runtime/python/Lib/site-packages`，见第 6 节。
+
+## 5. DeepSeek 二创表情包（不随 zip 分发图片）
+- 上游：https://github.com/anka-afk/deepseek-fanart-meme-pack @ v1.0.0（id `deepseek-fanart-meme-pack`）
+- 上游 LICENSE 声明：原素材许可**未指定**，版权归各权利人；本整合包**不把图片打进 Release zip**。
+- 启动器首次联网时从官方 GitHub 仓库代为下载到本机 `runtime/AstrBot/data/plugin_data/meme_manager/packs/`。
+- 说明文件：`licenses/DeepSeek二创表情包-来源说明.txt`（用户本机也会有一份）。
+
+## 6. Python 与第三方库
 - 嵌入式 CPython 3.12.10：PSF License，见 `licenses/Python-LICENSE.txt`
 - 其余 Python 依赖的名称、版本和许可列表见 `licenses/third-party-python-packages.txt`，各自的许可证文本在 `runtime/python/Lib/site-packages/*.dist-info` 中。
 
-## 5. 微软运行库（不随包分发）
+## 7. 微软运行库（不随包分发）
 本整合包**不附带** Visual C++ Redistributable 或 WebView2 Runtime 安装包。环境检测发现缺失时，`tools/fix.ps1` 会调用本机 `winget` 安装：
 - Microsoft.VCRedist.2015+.x64（https://aka.ms/vs/17/release/vc_redist.x64.exe）
 - Microsoft.EdgeWebView2Runtime（https://developer.microsoft.com/microsoft-edge/webview2/）
 安装时视为你接受微软的许可条款。版权归 Microsoft Corporation 所有。
 
-## 6. 免责声明
+## 8. 免责声明
 QQ 机器人不是腾讯官方功能，使用有封号风险。本整合包按“原样”提供，不附带任何担保。因使用本整合包造成的任何损失，作者和上游项目均不承担责任。

@@ -5,7 +5,9 @@
 让 QQ 接上 DeepSeek 的 **Windows 离线整合包**。解压即用，不用装 Python，也不用自己下载组件。
 
 - 作者：**秋实KL** · 抖音 **@秋实KL**
-- 内置：AstrBot v4.29.3 · NapCat v4.18.41（Node 版）· astrbot_plugin_group_chat_plus · 嵌入式 Python 3.12
+- 内置：AstrBot v4.29.3 · NapCat v4.18.41（Node 版）· astrbot_plugin_group_chat_plus · **表情包管理器 meme_manager v5.2.7** · 嵌入式 Python 3.12
+- 默认表情包：首次联网自动下载「DeepSeek 二创表情包」（174 张，不随 zip 分发图片，因原素材许可未指定）
+- 默认人格「小鱼」已启用表情包工具；内置技能 documents/spreadsheets/pdf/skill-creator 默认关闭
 - 默认模型：DeepSeek `deepseek-flash`
 - **仅限免费分发，禁止任何形式的售卖或商用。** 如果你是花钱买到的，说明你被骗了。
 
@@ -33,7 +35,7 @@
 AI 会按 `AGENTS.md` 依次做环境检测、修复、配置和启动。**API Key 请你自己粘贴**，不要发到任何聊天群里。
 
 ## 想让机器人更有人情味？
-见 [推荐插件.md](docs/推荐插件.md)（表情包、表情回应、长期记忆、分段回复等精选插件，以及插件市场下载慢的解决办法）。
+见 [推荐插件.md](docs/推荐插件.md)。**表情包管理器已预装**，首次启动会自动拉取 DeepSeek 二创表情包；其它如贴表情、戳一戳等见文档。
 
 ## 改人格 / 高级设置
 在启动器「控制台」页点「打开管理后台」（AstrBot 原版界面）。

@@ -37,6 +37,17 @@ cp -r "$CACHE/astrbot_plugin_group_chat_plus-main" "$P"
 rm -rf "$P/tests" "$P/.git"* 
 echo 'argon2-cffi>=23.1.0' > "$P/requirements.txt"   # 去掉 pytest/hypothesis，避免离线时自动 pip
 
+# 表情包管理器（MIT，可再分发）。图片包因原素材许可未指定，不打进 zip，首次启动由 launcher 从官方仓库拉取。
+M="$A/data/plugins/meme_manager"
+cp -r "$CACHE/astrbot_plugin_meme_manager-main" "$M"
+rm -rf "$M/tests" "$M/.github" "$M/.git"*
+# 依赖已预装进 site-packages（faiss-cpu/pillow/boto3/tqdm…），清空 requirements 避免离线时 pip
+printf '# deps bundled in runtime/python/Lib/site-packages\n' > "$M/requirements.txt"
+mkdir -p "$A/data/plugin_data/meme_manager/packs" "$A/data/plugin_data/meme_manager/backup" "$A/data/plugin_data/meme_manager/temp"
+printf '%s\n'   '默认表情包 DeepSeek 二创（deepseek-fanart-meme-pack）'   '来源：https://github.com/anka-afk/deepseek-fanart-meme-pack @ v1.0.0'   '维护：anka-afk（Meme Manager 适配）'   '许可：原素材许可未指定，版权归各权利人；本整合包不二次分发图片，'   '仅在你本机首次启动时从官方仓库下载。详见该仓库 LICENSE。'   > "$A/data/plugin_data/meme_manager/PACK_ATTRIBUTION.txt"
+# 空 registry：等首次下载成功后再写入；插件启动时自己会建 builtin-default
+printf '{"schema_version":1,"installed_packs":[]}\n' > "$A/data/plugin_data/meme_manager/registry.json"
+
 # 4) NapCat（Node 免安装 QQ 版）
 python3 -c "import zipfile;zipfile.ZipFile('$CACHE/NapCat.Shell.Windows.Node.zip').extractall('$OUT/runtime/napcat')"
 
@@ -44,6 +55,8 @@ python3 -c "import zipfile;zipfile.ZipFile('$CACHE/NapCat.Shell.Windows.Node.zip
 cp "$CACHE/AstrBot-4.29.3/LICENSE" "$OUT/licenses/AstrBot-LICENSE-AGPL-3.0.txt"
 cp "$CACHE/AstrBot-4.29.3/EULA.md" "$OUT/licenses/AstrBot-EULA.md"
 cp "$CACHE/astrbot_plugin_group_chat_plus-main/LICENSE" "$OUT/licenses/group_chat_plus-LICENSE.txt"
+cp "$CACHE/astrbot_plugin_meme_manager-main/LICENSE" "$OUT/licenses/meme_manager-LICENSE-MIT.txt"
+cp "$A/data/plugin_data/meme_manager/PACK_ATTRIBUTION.txt" "$OUT/licenses/DeepSeek二创表情包-来源说明.txt"
 cp "$CACHE/NapCat-LICENSE.txt" "$OUT/licenses/NapCat-LICENSE.txt"
 cp "$OUT/runtime/python/LICENSE.txt" "$OUT/licenses/Python-LICENSE.txt"
 python3 - "$CACHE/sp" "$OUT/licenses/third-party-python-packages.txt" <<'PY'
