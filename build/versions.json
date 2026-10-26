@@ -14,5 +14,6 @@
   "meme_manager_repo": "https://github.com/anka-afk/astrbot_plugin_meme_manager",
   "meme_pack": "deepseek-fanart-meme-pack@v1.0.0",
   "meme_pack_repo": "https://github.com/anka-afk/deepseek-fanart-meme-pack",
-  "meme_pack_note": "images NOT redistributed (LICENSE unspecified); first-run download"
+  "meme_pack_note": "LICENSE=NOASSERTION; images NOT in public Release; silent first-run download; local dist/with-meme-pack/ for author testing",
+  "bundle_version": "1.0.3"
 }
