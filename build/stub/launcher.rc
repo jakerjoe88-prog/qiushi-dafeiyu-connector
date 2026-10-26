@@ -1,0 +1,27 @@
+#pragma code_page(65001)
+#include <winver.h>
+1 ICON "../../app/web/icon.ico"
+1 VERSIONINFO
+FILEVERSION 1,0,1,0
+PRODUCTVERSION 1,0,1,0
+FILEOS VOS_NT_WINDOWS32
+FILETYPE VFT_APP
+BEGIN
+ BLOCK "StringFileInfo"
+ BEGIN
+  BLOCK "080404B0"
+  BEGIN
+   VALUE "CompanyName", "秋实KL"
+   VALUE "FileDescription", "秋实的大肥鱼连接器"
+   VALUE "FileVersion", "1.0.1"
+   VALUE "ProductName", "秋实的大肥鱼连接器"
+   VALUE "ProductVersion", "1.0.1"
+   VALUE "LegalCopyright", "秋实KL · 免费分发"
+   VALUE "OriginalFilename", "秋实的大肥鱼连接器.exe"
+  END
+ END
+ BLOCK "VarFileInfo"
+ BEGIN
+  VALUE "Translation", 0x804, 1200
+ END
+END

@@ -37,6 +37,37 @@ PORT = int(os.environ.get("QQAI_PORT", "6188"))
 WIN = os.name == "nt"
 NO_WINDOW = 0x08000000 if WIN else 0
 ANSI = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
+APP_ID = "QiushiKL.DafeiyuConnector.1"
+ICON = os.path.join(APP_DIR, "web", "icon.ico")
+EXE_NAME = "秋实的大肥鱼连接器.exe"
+
+
+def set_app_id() -> None:
+    """让任务栏按我们自己的 AppUserModelID 分组 → 显示鱼图标而不是 Python 图标。必须在建窗口前调用。"""
+    if not WIN:
+        return
+    try:
+        import ctypes
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(APP_ID)
+    except Exception as e:  # noqa: BLE001
+        log(f"AppUserModelID failed: {e!r}")
+
+
+def brand_folder() -> None:
+    """整合包根目录显示鱼图标：desktop.ini 需 隐藏+系统 属性，文件夹本身需 只读 属性才生效。"""
+    if not WIN:
+        return
+    try:
+        ini = os.path.join(ROOT, "desktop.ini")
+        if not os.path.exists(ini):
+            with open(ini, "w", encoding="utf-16", newline="") as f:
+                f.write("[.ShellClassInfo]\r\nIconResource=app\\web\\icon.ico,0\r\nInfoTip=秋实的大肥鱼连接器 · 双击里面的「秋实的大肥鱼连接器.exe」启动\r\n")
+        subprocess.run(["attrib", "+h", "+s", ini], capture_output=True, timeout=10, creationflags=NO_WINDOW)
+        subprocess.run(["attrib", "+r", ROOT], capture_output=True, timeout=10, creationflags=NO_WINDOW)
+    except Exception as e:  # noqa: BLE001
+        log(f"folder icon failed: {e!r}")
+
+
 KEY_RE = re.compile(r"sk-[A-Za-z0-9_\-]{6,}")
 
 os.makedirs(LOG_DIR, exist_ok=True)
@@ -157,13 +188,15 @@ def make_shortcut() -> None:
     if not WIN:
         return
     try:
-        target = os.path.join(ROOT, "启动 秋实的大肥鱼连接器.bat")
-        icon = os.path.join(APP_DIR, "web", "icon.ico")
+        target = os.path.join(ROOT, EXE_NAME)
+        if not os.path.exists(target):
+            target = os.path.join(ROOT, "启动 秋实的大肥鱼连接器.bat")
+        icon = ICON
         ps = (
             "$d=[Environment]::GetFolderPath('Desktop');"
             "$s=(New-Object -ComObject WScript.Shell).CreateShortcut((Join-Path $d '秋实的大肥鱼连接器.lnk'));"
             f"$s.TargetPath='{target}';$s.WorkingDirectory='{ROOT}';$s.IconLocation='{icon}';"
-            "$s.WindowStyle=7;$s.Save()"
+            "$s.Description='秋实的大肥鱼连接器';$s.Save()"
         )
         subprocess.run(["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", ps],
                        capture_output=True, timeout=20, creationflags=NO_WINDOW)
@@ -492,7 +525,7 @@ def open_window(url: str) -> bool:
     try:
         webview.create_window("秋实的大肥鱼连接器", url, width=1180, height=800, min_size=(940, 640),
                               background_color="#F9F8F8", text_select=True)
-        webview.start(private_mode=False)  # 阻塞直到窗口关闭
+        webview.start(private_mode=False, icon=ICON)  # 阻塞直到窗口关闭
         return True
     except Exception as e:  # noqa: BLE001
         log(f"WebView2 窗口失败，改用浏览器：{e!r}")
@@ -502,6 +535,8 @@ def open_window(url: str) -> bool:
 def main():
     if cli():
         return
+    set_app_id()
+    threading.Thread(target=brand_folder, daemon=True).start()
     url = f"http://127.0.0.1:{PORT}/"
     if port_listening(PORT):  # 已经开着：直接打开页面
         webbrowser.open(url)

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>秋实的大肥鱼连接器</title>
 <link rel="icon" href="/static/icon.svg">
+<link rel="alternate icon" href="/static/icon.ico">
 <style>
 :root{
   --font:"HarmonyOS Sans SC","MiSans","Microsoft YaHei UI","Microsoft YaHei","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif;
@@ -176,6 +177,13 @@ button{font:inherit;cursor:pointer;border:0;color:inherit}
 .cred{margin-top:14px;padding:12px 14px;border-radius:12px;background:var(--soft);display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12.8px;color:var(--sub)}
 code{font-family:var(--mono);font-size:13px;color:var(--ink);background:#fff;border:1px solid var(--line);padding:2px 9px;border-radius:8px}
 .cred .sp{flex:1}
+.credcard{margin-top:14px;padding:14px 16px;border-radius:14px;background:linear-gradient(180deg,#FFF8E6,#FFFBF2);border:1.5px solid #F5C451;box-shadow:0 6px 18px -12px rgba(200,140,0,.5)}
+.cc-h{display:flex;align-items:center;gap:8px;font-weight:600;font-size:13.5px;color:#9A6400;margin-bottom:10px}.cc-h svg{width:17px;height:17px}
+.cc-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:7px 0}
+.cc-l{display:inline-block;min-width:38px;font-weight:700;font-size:14px;color:var(--ink)}
+.cc-v{font-size:15px;font-weight:600;padding:4px 12px;letter-spacing:.5px;min-width:150px}
+.cc-tip{margin-top:8px;font-size:12px;color:#8A6A2A}.cc-tip b{color:#7A4E00}
+.credmodal .cc-row{justify-content:flex-start}.credmodal .card{max-width:470px}
 .usage li{font-size:13px}
 details{margin-top:18px;border-radius:14px;border:1px solid var(--line);background:#fff;overflow:hidden}
 summary{cursor:pointer;padding:12px 16px;font-size:13px;color:var(--sub);list-style:none;display:flex;gap:8px;align-items:center}
@@ -406,14 +414,19 @@ footer .by b{color:var(--blue)}footer .by svg{width:14px;height:14px}
     <div class="box">
       <h4><svg><use href="#i-mask"/></svg>管理后台（原版界面）</h4>
       <p>人格、说话风格、插件参数都在原版后台里调整，网上的 AstrBot / NapCat 教程可以直接照着做。</p>
+      <div class="credcard" id="credCard">
+        <div class="cc-h"><svg><use href="#i-mask"/></svg>登录管理后台要用 ↓ 先记下账号密码</div>
+        <div class="cc-row"><span class="cc-l">账号</span><code class="cc-v" id="user">astrbot</code><button class="btn gh sm" id="copyUser"><svg><use href="#i-copy"/></svg>复制</button></div>
+        <div class="cc-row"><span class="cc-l">密码</span><code class="cc-v" id="pw">••••••••••••</code>
+          <button class="btn gh sm" id="showPw"><svg><use href="#i-eye"/></svg>显示</button>
+          <button class="btn pri sm" id="copyPw"><svg><use href="#i-copy"/></svg>复制密码</button>
+          <button class="btn gh sm" id="resetPw" title="忘记密码时使用"><svg><use href="#i-redo"/></svg>重置</button></div>
+        <p class="cc-tip">点下面「打开管理后台」会<b>自动复制密码</b>，登录页账号填 <b>astrbot</b>、密码处直接 <b>Ctrl+V</b> 粘贴。首次登录会要求改密码，改完请自己记住；忘了点「重置」。</p>
+      </div>
       <button class="entry astr" id="dash"><span class="ei"><svg><use href="#i-mask"/></svg></span>
         <div><b>打开管理后台（人格/插件设置）</b><span>AstrBot WebUI · 127.0.0.1:6185</span></div><span class="arr"><svg><use href="#i-chev"/></svg></span></button>
       <div class="crumbs"><span>扩展功能 → 人格设定</span><span>插件 → group_chat_plus 卡片 → 配置</span><span>配置文件 → 人格</span><span>模型提供商</span></div>
-      <div class="cred">账号 <code>astrbot</code> 初始密码 <code id="pw">••••••••••••</code><span class="sp"></span>
-        <button class="btn gh sm" id="showPw"><svg><use href="#i-eye"/></svg>显示</button>
-        <button class="btn gh sm" id="copyPw"><svg><use href="#i-copy"/></svg>复制</button>
-        <button class="btn gh sm" id="resetPw" title="忘记密码时使用"><svg><use href="#i-redo"/></svg>重置</button></div>
-      <p style="margin-top:8px;font-size:12px">首次登录会要求修改密码，改完请自己记住；忘了点「重置」。</p>
+
       <button class="entry nap" id="napweb"><span class="ei"><svg><use href="#i-cat"/></svg></span>
         <div><b>打开 NapCat WebUI</b><span>QQ 登录 · 网络配置 · 127.0.0.1:6099（已自动登录）</span></div><span class="arr"><svg><use href="#i-chev"/></svg></span></button>
     </div>
@@ -501,10 +514,16 @@ async function act(btn,p,txt){busy(btn,true,txt);const r=await api(p,{});busy(bt
 $("startBtn").onclick=()=>act($("startBtn"),"/api/start","启动中");
 $("stopBtn").onclick=async()=>{if(await ask("停止机器人？","停止后 QQ 上的机器人会下线，随时可以再点「启动」。","停止"))act($("stopBtn"),"/api/stop","停止中")};
 $("restartBtn").onclick=()=>act($("restartBtn"),"/api/restart","重启中");
-$("dash").onclick=()=>{if(st.dashboard)api("/api/open-dashboard",{});else toast("管理后台还没就绪：请先点「启动」，等「AstrBot 大脑」变绿",true)};
+async function copyText(t){try{await navigator.clipboard.writeText(t);return true}catch(e){try{const a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();const ok=document.execCommand("copy");a.remove();return ok}catch(_){return false}}}
+function credModal(copied){return new Promise(res=>{const pw=st.dashboard_password||"（首次启动后生成）";const m=document.createElement("div");m.className="modal credmodal";m.innerHTML=`<div class="card"><h4>${copied?"✅ 密码已复制，登录页直接粘贴":"请记下后台账号密码"}</h4><p>管理后台会在浏览器打开，登录页这样填：</p><div class="credcard" style="margin-top:12px"><div class="cc-row"><span class="cc-l">账号</span><code class="cc-v">astrbot</code></div><div class="cc-row"><span class="cc-l">密码</span><code class="cc-v">${pw}</code><button class="btn gh sm" data-cp="1">${ICON("copy")}再复制一次</button></div><p class="cc-tip">密码框里按 <b>Ctrl+V</b> 粘贴即可。首次登录会要求改密码，改完请自己记住。</p></div><div class="actions"><button class="btn gh" data-v="0">取消</button><button class="btn pri" data-v="1">知道了，打开后台</button></div></div>`;m.onclick=async e=>{if(e.target.closest("[data-cp]")){toast((await copyText(st.dashboard_password))?"密码已复制":"复制失败，请手动输入",false);return}const v=e.target.closest("[data-v]");if(v||e.target===m){m.remove();res(v&&v.dataset.v==="1")}};document.body.appendChild(m)})}
+$("dash").onclick=async()=>{if(!st.dashboard){toast("管理后台还没就绪：请先点「启动」，等「AstrBot 大脑」变绿",true);return}
+  const ok=st.dashboard_password?await copyText(st.dashboard_password):false;
+  if(ok)toast("账号 astrbot，密码已复制，登录页直接粘贴");
+  if(await credModal(ok))api("/api/open-dashboard",{})};
+$("copyUser").onclick=async()=>toast((await copyText("astrbot"))?"账号 astrbot 已复制":"复制失败",false);
 $("napweb").onclick=()=>{if(st.napcat_webui)api("/api/open-napcat",{});else toast("NapCat 还没就绪：请先点「启动」，稍等几秒",true)};
 $("showPw").onclick=()=>{pwShown=!pwShown;$("showPw").innerHTML=ICON("eye")+(pwShown?"隐藏":"显示");render()};
-$("copyPw").onclick=async()=>{try{await navigator.clipboard.writeText(st.dashboard_password);toast("密码已复制，到后台粘贴即可")}catch(e){toast("复制失败，请点「显示」后手动输入",true)}};
+$("copyPw").onclick=async()=>{if(await copyText(st.dashboard_password))toast("密码已复制，到后台登录页粘贴即可");else toast("复制失败，请点「显示」后手动输入",true)};
 $("resetPw").onclick=async()=>{if(!await ask("重置后台密码？","会生成新的初始密码，并自动重启 AstrBot（约 20 秒）。","重置"))return;const r=await api("/api/reset-dashboard-password",{});pwShown=true;$("showPw").innerHTML=ICON("eye")+"隐藏";toast(r.msg,!r.ok);refresh()};
 $("quit").onclick=async()=>{if(!await ask("退出控制台？","退出后机器人会停止工作。下次双击桌面「秋实的大肥鱼连接器」即可再次打开。","退出"))return;await api("/api/quit",{});document.querySelector("main").innerHTML='<section class="card view hero"><h2>已退出</h2><p class="lead">机器人已停止，可以关闭此窗口。</p></section>'};
 $("logBox").ontoggle=refresh;
@@ -555,7 +574,7 @@ async function boot(){
     if(D==="step2same"){$("qq").value="123456789";$("admin").value="123456789";checkQQ()}}
   else if(D==="doctor"||D==="doctorfix"){show("doctor");runDoctor()}
   else if(D==="ai"){show("ai");loadPrompt()}
-  else{show("panel");if(D==="panelpw"){pwShown=true;$("showPw").innerHTML=ICON("eye")+"隐藏"}}
+  else{show("panel");if(D==="panelpw"){pwShown=true;$("showPw").innerHTML=ICON("eye")+"隐藏"}if(D==="paneldash")setTimeout(()=>credModal(true),600)}
   render();if(!DEMO||D==="anim"||D==="flow")setInterval(refresh,DEMO?1500:2000);
 }
 let backTo="welcome";

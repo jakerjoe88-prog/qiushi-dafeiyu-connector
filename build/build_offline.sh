@@ -9,8 +9,13 @@ rm -rf "$HERE/dist" && mkdir -p "$OUT/runtime" "$OUT/licenses" "$OUT/docs"
 
 # 1) 启动器
 cp -r "$HERE/app" "$OUT/app"; rm -rf "$OUT/app/__pycache__"; rm -f "$OUT/app/web/demo-qr.png"
-printf '@echo off\r\ncd /d "%%~dp0"\r\nstart "" "runtime\\python\\pythonw.exe" "app\\launcher.py"\r\n' > "$OUT/启动 秋实的大肥鱼连接器.bat"
+# 主入口：带鱼图标的 exe（mingw-w64 交叉编译，见 build/stub），任务栏/资源管理器都显示鱼 logo
+"$HERE/build/stub/build.sh"
+cp "$HERE/build/stub/launcher.exe" "$OUT/秋实的大肥鱼连接器.exe"
 printf '@echo off\r\ncd /d "%%~dp0"\r\necho 调试模式：窗口里会显示启动器日志\r\n"runtime\\python\\python.exe" "app\\launcher.py"\r\npause\r\n' > "$OUT/调试启动（出问题时用）.bat"
+# 文件夹图标：desktop.ini（启动器首次运行时会 attrib +h +s desktop.ini、+r 文件夹，使其生效）
+printf '[.ShellClassInfo]\r\nIconResource=app\\web\\icon.ico,0\r\nInfoTip=秋实的大肥鱼连接器 · 双击「秋实的大肥鱼连接器.exe」启动\r\n' | iconv -f utf-8 -t utf-16 > "$OUT/desktop.ini"
+cp "$HERE/app/web/icon.ico" "$OUT/秋实的大肥鱼连接器.ico"
 
 # 2) 嵌入式 Python + Windows wheels
 mkdir -p "$OUT/runtime/python"
@@ -24,6 +29,8 @@ find "$OUT/runtime/python" -name __pycache__ -prune -exec rm -rf {} +
 A="$OUT/runtime/AstrBot"; mkdir -p "$A"
 (cd "$CACHE/AstrBot-4.29.3" && cp -r astrbot main.py runtime_bootstrap.py requirements.txt pyproject.toml LICENSE EULA.md "$A/")
 mkdir -p "$A/data/plugins"
+# 预置拟人人格「小鱼」(xiaoyu) 的初始数据库（需 Linux 版 AstrBot 依赖 venv：$CACHE/linvenv）
+"$CACHE/linvenv/bin/python" "$HERE/build/seed/make_db.py" "$CACHE/AstrBot-4.29.3" "$A/data/data_v4.db"
 python3 -c "import zipfile;zipfile.ZipFile('$CACHE/dashboard.zip').extractall('$A/data')"
 P="$A/data/plugins/astrbot_plugin_group_chat_plus"
 cp -r "$CACHE/astrbot_plugin_group_chat_plus-main" "$P"
@@ -49,7 +56,7 @@ for m in sorted(glob.glob(os.path.join(sp,"*.dist-info","METADATA"))):
     rows.append(f"{msg['Name']}=={msg['Version']}\t{lic or '见包内 LICENSE'}")
 open(out,"w",encoding="utf-8").write("本整合包内置的 Python 第三方库（各自许可证文本见 runtime/python/Lib/site-packages/*.dist-info）\n\n"+"\n".join(rows)+"\n")
 PY
-cp "$HERE/README.md" "$OUT/使用说明.md"; cp "$HERE/docs/改人格教程.md" "$OUT/"; cp "$HERE/LICENSE-NOTICES.md" "$OUT/licenses/README-许可与致谢.md"
+cp "$HERE/README.md" "$OUT/使用说明.md"; cp "$HERE/docs/改人格教程.md" "$HERE/docs/推荐插件.md" "$OUT/"; cp "$HERE/LICENSE-NOTICES.md" "$OUT/licenses/README-许可与致谢.md"
 [ -d "$HERE/docs/screenshots" ] && cp -r "$HERE/docs/screenshots" "$OUT/docs/"
 # 给本地 AI 代理的工具与说明书（方式一：让AI帮我装）
 cp -r "$HERE/tools" "$OUT/tools"; rm -f "$OUT/tools/doctor-report.json"

@@ -22,3 +22,4 @@ logs/
 settings.json
 tests/upstream/
 tools/redist/
+build/stub/launcher.exe

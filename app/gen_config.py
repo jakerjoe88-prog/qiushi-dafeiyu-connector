@@ -115,6 +115,11 @@ def load_astrbot_default(astrbot_dir: str | None) -> dict:
         sys.modules.update(saved)
 
 
+DEFAULT_PERSONA_ID = "xiaoyu"
+# AstrBot 4.29 内置技能（builtin_stars/astrbot/skills），聊天机器人用不上，默认关闭（data/skills.json）
+BUILTIN_SKILLS_OFF = ("documents", "spreadsheets", "pdf", "skill-creator")
+
+
 def astrbot_patch(api_key: str, qq: str, admin_qq: str = "", model: str = DEFAULT_MODEL) -> dict:
     admins = [a for a in [admin_qq] if a]
     return {
@@ -154,6 +159,8 @@ def astrbot_patch(api_key: str, qq: str, admin_qq: str = "", model: str = DEFAUL
             "empty_mention_waiting": False,           # 插件要求：只@机器人是否触发等待 → 关
             "empty_mention_waiting_need_reply": False,
             "enable_id_white_list": False,
+            # 分段回复：像真人一样一句一句发（AstrBot 原生 platform_settings.segmented_reply）
+            "segmented_reply": {"enable": True, "only_llm_result": True, "interval_method": "random", "interval": "1.5,3.5"},
             "rate_limit": {"time": 60, "count": ASTRBOT_TUNING["rate_limit_count"], "strategy": "discard"},
         },
         "provider_settings": {"enable": True, "web_search": False, "streaming_response": False},
@@ -167,6 +174,8 @@ def astrbot_patch(api_key: str, qq: str, admin_qq: str = "", model: str = DEFAUL
             "model": {"provider_id": PROVIDER_ID},
             "compression": {"max_turns": ASTRBOT_TUNING["max_turns"], "overflow_strategy": "truncate_by_turns"},
             "misc": {"max_steps": 8},
+            # 默认人格：拟人「小鱼」（预置在 data_v4.db，可在 人格设定 里改/换）
+            "persona": {"persona_id": DEFAULT_PERSONA_ID},
         }},
         "admins_id": ["astrbot", *admins],
         # 管理后台只监听本机，避免局域网/公网访问
@@ -271,6 +280,10 @@ def write_all(api_key, qq, admin_qq, astrbot_dir, napcat_dir, model=DEFAULT_MODE
         with open(cmd_path, encoding="utf-8-sig") as f:
             existing = json.load(f)
     _dump(cmd_path, build_astrbot_config(api_key, qq, admin_qq, astrbot_dir, existing, model))
+
+    skills_cfg = os.path.join(data, "skills.json")
+    if not os.path.exists(skills_cfg):  # 只在首次写，之后以后台「技能」页为准
+        _dump(skills_cfg, {"skills": {n: {"active": False} for n in BUILTIN_SKILLS_OFF}})
 
     plugin_cfg = os.path.join(data, "config", f"{PLUGIN_NAME}_config.json")
     if os.path.exists(plugin_cfg):
