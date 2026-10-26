@@ -1,0 +1,4 @@
+tests/upstream/
+dist/
+__pycache__/
+.pytest_cache/

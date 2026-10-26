@@ -1,0 +1,10 @@
+{
+  "astrbot_tag": "v4.29.3",
+  "astrbot_src": "https://github.com/AstrBotDevs/AstrBot/archive/refs/tags/v4.29.3.zip",
+  "astrbot_dashboard": "https://github.com/AstrBotDevs/AstrBot/releases/download/v4.29.3/AstrBot-v4.29.3-dashboard.zip",
+  "napcat_shell": "https://github.com/NapNeko/NapCatQQ/releases/download/v4.18.41/NapCat.Shell.zip",
+  "plugin_zip": "https://github.com/Him666233/astrbot_plugin_group_chat_plus/archive/refs/heads/main.zip",
+  "uv_zip": "https://github.com/astral-sh/uv/releases/latest/download/uv-x86_64-pc-windows-msvc.zip",
+  "qq_download_page": "https://im.qq.com/pcqq/index.shtml",
+  "python_version": "3.12"
+}
