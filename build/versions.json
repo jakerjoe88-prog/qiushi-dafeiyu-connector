@@ -15,5 +15,5 @@
   "meme_pack": "deepseek-fanart-meme-pack@v1.0.0",
   "meme_pack_repo": "https://github.com/anka-afk/deepseek-fanart-meme-pack",
   "meme_pack_note": "author-authorized redistribution (~2026-10-26 per project statement); images IN public Release as default pack; silent download only if missing",
-  "bundle_version": "1.0.4"
+  "bundle_version": "1.0.5"
 }

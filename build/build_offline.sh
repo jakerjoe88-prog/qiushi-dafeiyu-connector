@@ -9,7 +9,7 @@ rm -rf "$HERE/dist" && mkdir -p "$OUT/runtime" "$OUT/licenses" "$OUT/docs"
 
 # 1) 启动器
 cp -r "$HERE/app" "$OUT/app"; rm -rf "$OUT/app/__pycache__"; rm -f "$OUT/app/web/demo-qr.png"
-# 主入口：带鱼图标的 exe（mingw-w64 交叉编译，见 build/stub），任务栏/资源管理器都显示鱼 logo
+# 主入口：带看板娘图标的 exe（mingw-w64 交叉编译，见 build/stub），任务栏/资源管理器都显示看板娘 logo
 "$HERE/build/stub/build.sh"
 cp "$HERE/build/stub/launcher.exe" "$OUT/秋实的大肥鱼连接器.exe"
 printf '@echo off\r\ncd /d "%%~dp0"\r\necho 调试模式：窗口里会显示启动器日志\r\n"runtime\\python\\python.exe" "app\\launcher.py"\r\npause\r\n' > "$OUT/调试启动（出问题时用）.bat"
@@ -86,7 +86,9 @@ for m in sorted(glob.glob(os.path.join(sp,"*.dist-info","METADATA"))):
     rows.append(f"{msg['Name']}=={msg['Version']}\t{lic or '见包内 LICENSE'}")
 open(out,"w",encoding="utf-8").write("本整合包内置的 Python 第三方库（各自许可证文本见 runtime/python/Lib/site-packages/*.dist-info）\n\n"+"\n".join(rows)+"\n")
 PY
-cp "$HERE/README.md" "$OUT/使用说明.md"; cp "$HERE/docs/改人格教程.md" "$HERE/docs/推荐插件.md" "$OUT/"; cp "$HERE/LICENSE-NOTICES.md" "$OUT/licenses/README-许可与致谢.md"
+cp "$HERE/README.md" "$OUT/使用说明.md"
+mkdir -p "$OUT/assets"
+cp "$HERE/assets/mascot-avatar.png" "$OUT/assets/"; cp "$HERE/docs/改人格教程.md" "$HERE/docs/推荐插件.md" "$OUT/"; cp "$HERE/LICENSE-NOTICES.md" "$OUT/licenses/README-许可与致谢.md"
 [ -d "$HERE/docs/screenshots" ] && cp -r "$HERE/docs/screenshots" "$OUT/docs/"
 # 给本地 AI 代理的工具与说明书（方式一：让AI帮我装）
 cp -r "$HERE/tools" "$OUT/tools"; rm -f "$OUT/tools/doctor-report.json"
