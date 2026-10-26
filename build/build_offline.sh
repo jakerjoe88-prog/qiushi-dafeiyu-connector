@@ -8,6 +8,8 @@ OUT="$HERE/dist/QQAI"
 rm -rf "$HERE/dist" && mkdir -p "$OUT/runtime" "$OUT/licenses" "$OUT/docs"
 
 # 1) 启动器
+# 每次打包都从 mascot-avatar.png 重生成 icon.ico（禁止用 fish-logo）
+python3 "$HERE/build/make_icon.py"
 cp -r "$HERE/app" "$OUT/app"; rm -rf "$OUT/app/__pycache__"; rm -f "$OUT/app/web/demo-qr.png"
 # 主入口：带看板娘图标的 exe（mingw-w64 交叉编译，见 build/stub），任务栏/资源管理器都显示看板娘 logo
 "$HERE/build/stub/build.sh"

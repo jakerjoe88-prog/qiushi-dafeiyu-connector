@@ -44,7 +44,7 @@ EXE_NAME = "秋实的大肥鱼连接器.exe"
 
 
 def set_app_id() -> None:
-    """让任务栏按我们自己的 AppUserModelID 分组 → 显示鱼图标而不是 Python 图标。必须在建窗口前调用。"""
+    """让任务栏按我们自己的 AppUserModelID 分组 → 显示看板娘图标而不是 Python 图标。必须在建窗口前调用。"""
     if not WIN:
         return
     try:
@@ -55,7 +55,7 @@ def set_app_id() -> None:
 
 
 def brand_folder() -> None:
-    """整合包根目录显示鱼图标：desktop.ini 需 隐藏+系统 属性，文件夹本身需 只读 属性才生效。"""
+    """整合包根目录显示看板娘图标：desktop.ini 需 隐藏+系统 属性，文件夹本身需 只读 属性才生效。"""
     if not WIN:
         return
     try:
@@ -190,13 +190,16 @@ def make_shortcut() -> None:
         return
     try:
         target = os.path.join(ROOT, EXE_NAME)
-        if not os.path.exists(target):
+        # 优先用 exe 内嵌看板娘图标；若无 exe 则回退到 app/web/icon.ico
+        if os.path.exists(target):
+            icon_loc = f"{target},0"
+        else:
             target = os.path.join(ROOT, "启动 秋实的大肥鱼连接器.bat")
-        icon = ICON
+            icon_loc = ICON
         ps = (
             "$d=[Environment]::GetFolderPath('Desktop');"
             "$s=(New-Object -ComObject WScript.Shell).CreateShortcut((Join-Path $d '秋实的大肥鱼连接器.lnk'));"
-            f"$s.TargetPath='{target}';$s.WorkingDirectory='{ROOT}';$s.IconLocation='{icon}';"
+            f"$s.TargetPath='{target}';$s.WorkingDirectory='{ROOT}';$s.IconLocation='{icon_loc}';"
             "$s.Description='秋实的大肥鱼连接器';$s.Save()"
         )
         subprocess.run(["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", ps],

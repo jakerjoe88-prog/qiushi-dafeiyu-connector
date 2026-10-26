@@ -1,4 +1,4 @@
-/* 秋实的大肥鱼连接器 启动器外壳：带鱼图标的小 exe，静默拉起 runtime\python\pythonw.exe app\launcher.py */
+/* 秋实的大肥鱼连接器 启动器外壳：带看板娘图标的小 exe，静默拉起 runtime\python\pythonw.exe app\launcher.py */
 #include <windows.h>
 #include <shlwapi.h>
 int WINAPI wWinMain(HINSTANCE h, HINSTANCE p, LPWSTR cmd, int show) {
